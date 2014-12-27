@@ -1,0 +1,30 @@
+class Trie:
+	def __init__(self):
+		self.root = {}
+
+	def insert(self, key, value):
+		self.__insert(self.root, key, value)
+
+	def dump(self, file):
+		values = []
+		self.__dump(self.root, values)
+
+	def __dump(self, dict, values):
+		if dict['value']:
+			values.append(dict['value'])
+		else:
+			for d in dict:
+				__dump(d, values)
+
+	def __insert(self, dict, key, value):
+		if key:
+			key_head = key[0]
+			if key_head not in dict:
+				dict[key_head] = {}
+			self.__insert(dict[key_head], key[1:], value)
+		else:
+			if 'value' not in dict:
+				dict['value'] = []
+			if value not in dict['value']:
+				dict['value'].append(value)
+			
