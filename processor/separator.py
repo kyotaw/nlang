@@ -33,34 +33,35 @@ class Separator(object):
 				entries = self.__vocab.extract_words(sentence[i:])
 			else:
 				entries = [eos_entry]
-
+			
+			min_cost = sys.maxint
+			min_cost_pair_list = []
 			for entry in entries:
 				new_node = {'next':[], 'entry':entry, 'total_cost':0}
-				min_cost = sys.maxint
-				min_cost_nodes = []
 				for left_node in node_list[i]:
 					if self.__conn_table.is_connectable(left_node['entry']['pos'], new_node['entry']['pos']):
 						total_cost = left_node['total_cost'] + self.__conn_table.cost(left_node['entry']['pos'], new_node['entry']['pos'])
 						
 						if total_cost < min_cost:
 							min_cost = total_cost
-							min_cost_nodes = [left_node]
+							min_cost_pair_list = [(left_node, new_node)]
 						elif total_cost == min_cost:
 							min_cost = total_cost
-							min_cost_nodes.append(left_node)
+							min_cost_pair_list.append((left_node, new_node))
 			
-				if len(min_cost_nodes) > 0:
-					for left_node in min_cost_nodes:
-						new_node['total_cost'] = min_cost
-						left_node['next'].append(new_node)
+			if len(min_cost_pair_list) > 0:
+				for pair in min_cost_pair_list:
+					left_node = pair[0]
+					new_node = pair[1]
+					new_node['total_cost'] = min_cost
+					left_node['next'].append(new_node)
 				
-					index = i + entry['length']
+					index = i + new_node['entry']['length']
 					if index not in node_list:
 						node_list[index] = []
 					if new_node not in node_list[index]:
 						node_list[index].append(new_node)
-
-
+			
 		return self.__enum_nodes(bos_node, tagged)
 	
 	def __enum_nodes(self, node, tagged):
