@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from nlang.corpus.chasen.chasen_type import ChasenTagTable
+from nlang.corpus.chasen.chasen_type import ChasenInvertTable
 
 class ChasenWord(object):
 
@@ -9,7 +10,7 @@ class ChasenWord(object):
 		class_name = data.__class__.__name__		
 		if class_name == 'str' or class_name == 'unicode':
 			self.__init_from_rawstring(data)
-		elif clas_name == 'TaggedWord':
+		elif class_name == 'TaggedWord':
 			self.__init_from_tagged_word(data)
 			self.valid = True
 
@@ -40,39 +41,60 @@ class ChasenWord(object):
 		self.__lemma = tagged_word['lemma']	
 		self.__pron = tagged_word['pron']
 		self.__base = tagged_word['base']
+		tagged_form = tagged_word['conj_form']
+		self.__conj_form = ChasenInvertTable[tagged_form] if tagged_form in ChasenInvertTable else ''
+		tagged_type = tagged_word['conj_type']
+		self.__conj_type = ChasenInvertTable[tagged_type] if tagged_type in ChasenInvertTable else ''
+		pos_tokens = tagged_word['pos'].split('-')
+		self.__parts = (ChasenInvertTable[p] for p in pos_tokens if p != tagged_form and p != tagged_type)
 		
-	def lemma(self):
+	def lemma(self, format='chasen'):
 		return self.__lemma
 
-	def pron(self):
+	def pron(self, format='chasen'):
 		return self.__pron
 
-	def base(self):
+	def base(self, format='chasen'):
 		return self.__base
 
-	def pos(self):
-		tag = ''
-		for p in self.__parts:
-			if tag:
-				tag = tag + '-'
-			tag = tag + ChasenTagTable[p]
+	def pos(self, format='chasen'):
+		if format == 'chasen':
+			return self.__parts
+		elif format == 'nlang':
+			tag = ''
+			for p in self.__parts:
+				if tag:
+					tag = tag + '-'
+				tag = tag + ChasenTagTable[p]
 
-		if self.__conj_form:
-			if self.__conj_form in ChasenTagTable:
-				tag += '-' + ChasenTagTable[self.__conj_form]
-			else:
-				print('NOT FOUND FORM IN TAGTABLE: ' + self.__conj_form)
-				quit()
-		if self.__conj_type:
-			if self.__conj_type in ChasenTagTable:
-				tag += '-' + ChasenTagTable[self.__conj_type]
-			else:
-				print('NOT FOUND TYPE IN TAGTABLE: ' + self.__conj_type)
-				quit()
-		return tag
+			if self.__conj_form:
+				if self.__conj_form in ChasenTagTable:
+					tag += '-' + ChasenTagTable[self.__conj_form]
+				else:
+					print('NOT FOUND FORM IN TAGTABLE: ' + self.__conj_form)
+					quit()
+			if self.__conj_type:
+				if self.__conj_type in ChasenTagTable:
+					tag += '-' + ChasenTagTable[self.__conj_type]
+				else:
+					print('NOT FOUND TYPE IN TAGTABLE: ' + self.__conj_type)
+					quit()
+			return tag
+		else:
+			return ''
 	
-	def conj_form(self):
-		return ChasenTagTable[self.__conj_form] if self.__conj_form else ''
+	def conj_form(self, format='chasen'):
+		if format == 'chasen':
+			return self.__conj_form
+		elif format == 'nlang':
+			return ChasenTagTable[self.__conj_form] if self.__conj_form in ChasenTagTable else ''
+		else:
+			return ''
 
-	def conj_type(self):
-		return ChasenTagTable[self.__conj_type] if self.__conj_type else ''
+	def conj_type(self, format='chasen'):
+		if format == 'chasen':
+			return self.__conj_type
+		elif format == 'nlang':
+			return ChasenTagTable[self.__conj_type] if self.__conj_type in ChasenTagTable else ''
+		else:
+			return ''

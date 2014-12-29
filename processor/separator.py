@@ -18,11 +18,15 @@ class Separator(object):
 		return self.__parse(sentence, tagged=True)
 
 	def __parse(self, sentence, tagged):
+		
 		bos_entry = self.__vocab.word(lemma='BOS', pos='BOS')
 		eos_entry = self.__vocab.word(lemma='EOS', pos='EOS')
-		bos_node = {'next':[], 'entry':bos_entry, 'total_cost':0}
+		bos_node = {'entry':bos_entry, 'total_cost':0, 'result_id':0}
 		node_list = {}
 		node_list[0] = [bos_node]
+	
+		result_candidates = {} 
+		result_candidates[bos_node['result_id']] = [bos_entry]
 
 		length = len(sentence)
 		for i in range(0, length + 1):
@@ -34,53 +38,40 @@ class Separator(object):
 			else:
 				entries = [eos_entry]
 			
-			min_cost = sys.maxint
-			min_cost_pair_list = []
+			connected = False
 			for entry in entries:
-				new_node = {'next':[], 'entry':entry, 'total_cost':0}
+				new_node = {'entry':entry, 'total_cost':0, 'result_id': -1}
+				min_cost = sys.maxint
+				min_cost_nodes = []
 				for left_node in node_list[i]:
 					if self.__conn_table.is_connectable(left_node['entry']['pos'], new_node['entry']['pos']):
 						total_cost = left_node['total_cost'] + self.__conn_table.cost(left_node['entry']['pos'], new_node['entry']['pos'])
 						
 						if total_cost < min_cost:
 							min_cost = total_cost
-							min_cost_pair_list = [(left_node, new_node)]
+							min_cost_nodes = [left_node]
 						elif total_cost == min_cost:
 							min_cost = total_cost
-							min_cost_pair_list.append((left_node, new_node))
+							min_cost_nodes.append(left_node)
 			
-			if len(min_cost_pair_list) > 0:
-				for pair in min_cost_pair_list:
-					left_node = pair[0]
-					new_node = pair[1]
-					new_node['total_cost'] = min_cost
-					left_node['next'].append(new_node)
-				
-					index = i + new_node['entry']['length']
+				if len(min_cost_nodes) > 0:
+					for left_node in min_cost_nodes:
+						new_node['total_cost'] = min_cost
+						partial_result = result_candidates[left_node['result_id']]
+						id = len(result_candidates) + 1
+						result_candidates[id] = partial_result + [new_node['entry']]
+						new_node['result_id'] = id
+
+					index = i + entry['length']
 					if index not in node_list:
 						node_list[index] = []
 					if new_node not in node_list[index]:
 						node_list[index].append(new_node)
-			
-		return self.__enum_nodes(bos_node, tagged)
-	
-	def __enum_nodes(self, node, tagged):
-		stream_list = []
-		lemma = node['entry']['lemma']
-		if lemma == u'EOS':
-			if tagged:
-				return [[node['entry']]]
-			else:
-				return [[lemma]]
 		
-		if 'next' not in node or len(node['next']) == 0:
-			return [[]]
+		min_id = sys.maxint
+		for	k, v in result_candidates.items():
+			if k < min_id and v[-1]['lemma'] == 'EOS':
+				min_id = k
 
-		for	next_node in node['next']:
-			sub_stream_list = self.__enum_nodes(next_node, tagged)
-			for stream in sub_stream_list:
-				if len(stream) > 0:
-					stream_list.append([lemma] + stream)
-		return stream_list
-
+		return result_candidates[min_id]
 

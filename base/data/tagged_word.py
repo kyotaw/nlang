@@ -14,6 +14,9 @@ class TaggedWord(object):
 			'cost':cost,
 			'length':length if length > 0 else len(lemma) 
 		}
+
+	def get(self):
+		return (self.__word['lemma'], self.__word['pron'], self.__word['base'], self.__word['pos'])
 	
 	def __getitem__(self, key):
 		return self.__word[key] if key in self.__word else ''

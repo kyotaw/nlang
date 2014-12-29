@@ -21,7 +21,13 @@ class ChasenCorpusReader(object):
 		return [w.lemma for w in self.vocabulary]
 
 	def tagged_words(self):
-		return [TaggedWord(lemma=w.lemma(), pron=w.pron(), pos=w.pos(), conj_form=w.conj_form(), conj_type=w.conj_type(),  base=w.base()) for w in self.vocabulary]
+		return [TaggedWord(
+			lemma=w.lemma('nlang'),
+			pron=w.pron('nlang'),
+			pos=w.pos('nlang'),
+			conj_form=w.conj_form('nlang'),
+			conj_type=w.conj_type('nlang'),
+			base=w.base('nlang')) for w in self.vocabulary]
 
 	def __read(self, file_path, encoding):
 		f = codecs.open(file_path, 'r', encoding)

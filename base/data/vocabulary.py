@@ -18,12 +18,24 @@ class Vocabulary:
 				if len(tokens) < 5:
 					continue
 				
+				cost = 0
+				conj_form = ''
+				conj_type = ''
+				if len(tokens) == 5:
+					cost = tokens[4]
+				elif len(tokens) == 7:
+					conj_form = tokens[4]
+					conj_type = tokens[5]
+					cost = tokens[6]
+
 				word = TaggedWord(
 					lemma=tokens[0].decode('utf-8'),
 					pron=tokens[1].decode('utf-8'),
 					base=tokens[2].decode('utf-8'),
 					pos=tokens[3],
-					cost=tokens[4],
+					conj_form=conj_form,
+					conj_type=conj_type,
+					cost=cost,
 					length=len(tokens[0].decode('utf-8'))
 				)
 				self.__words.insert(word['lemma'], word)

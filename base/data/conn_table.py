@@ -21,7 +21,11 @@ class ConnectivityTable:
 				line = f.readline()
 	
 	def is_connectable(self, left_pos, right_pos):
+		if left_pos == 'BOS' and right_pos == 'EOS':
+			return True
 		return left_pos in self.__table and right_pos in self.__table[left_pos]
 
 	def cost(self, left_pos, right_pos):
+		if left_pos == 'BOS' and right_pos == 'EOS':
+			return 10
 		return self.__table[left_pos][right_pos] if self.is_connectable(left_pos, right_pos) else DISCONNECTABLE_COST

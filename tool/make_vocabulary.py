@@ -59,10 +59,10 @@ with open(out_file, 'wb') as f:
 		line += tagged_word['pron'] + u'\t'
 		line += tagged_word['base'] + u'\t'
 		line += tagged_word['pos'] + u'\t'
-#		if tagged_word['conj_form']:
-#			line += tagged_word['conj_form'] + u'\t'
-#		if tagged_word['conj_type']:
-#			line += tagged_word['conj_type'] + u'\t'
+		if tagged_word['conj_form']:
+			line += tagged_word['conj_form'] + u'\t'
+		if tagged_word['conj_type']:
+			line += tagged_word['conj_type'] + u'\t'
 		line += str(calculate_cost(analyzer.probability(tagged_word['lemma'], tagged_word['pos']))) #probability
 		line += u'\n'
 		f.write(line.encode('utf-8'))
