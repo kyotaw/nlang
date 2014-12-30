@@ -8,7 +8,7 @@ import os
 import datetime
 import threading
 
-from nlang.processor.separator import Separator
+from nlang.processor.tokenizer import Tokenizer
 from nlang.corpus.chasen.chasen_writer import ChasenCorpusWriter
 from nlang.base.util.util import *
 
@@ -30,12 +30,15 @@ start = datetime.datetime.now()
 if os.path.exists(out_dir) == False:
 	os.mkdir(out_dir)
 
-separator = Separator()
+separator = Tokenizer()
+
+file_count = 0
 for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
 		print('analyzing ' + file)
-		out_file = out_dir + '/' + prefix + os.path.basename(file) + '.chasen'	
+		file_count += 1
+		out_file = out_dir + '/' + prefix + str(file_count).zfill(4) + '.chasen'	
 		with open(file, 'r') as f:
-			tagged_words = separator.tagg((f.read().decode('utf-8')))
+			tagged_words = separator.tag((f.read().decode('utf-8')))
 			ChasenCorpusWriter(out_file, tagged_words)

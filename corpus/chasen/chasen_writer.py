@@ -14,10 +14,10 @@ class ChasenCorpusWriter(object):
 				line = chasen.lemma() + '\t'
 				line += chasen.pron() + '\t'
 				line += chasen.base() + '\t'
-				line += '-'.join(chasen.pos()) + '\t'
+				line += '-'.join(chasen.pos())
 				if chasen.conj_form():
-					line += chasen.conj_form() + '\t'
+					line += '\t' + chasen.conj_form() 
 				if chasen.conj_type():
-					line += chasen.conj_type() + '\t'
+					line += '\t' + chasen.conj_type()
 				line += u'\n'
 				f.write(line.encode('utf-8'))

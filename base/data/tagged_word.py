@@ -2,7 +2,7 @@
 
 class TaggedWord(object):
 
-	def __init__(self, lemma='', pron='', base='', pos='', conj_form='', conj_type='', cost=0, length=0):
+	def __init__(self, lemma='', pron='', base='', pos='', conj_form='', conj_type='', cost=0, length=-1):
 	
 		self.__word = {
 			'lemma':lemma,
@@ -12,7 +12,7 @@ class TaggedWord(object):
 			'conj_form':conj_form,
 			'conj_type':conj_type,
 			'cost':cost,
-			'length':length if length > 0 else len(lemma) 
+			'length':length if length >= 0 else len(lemma) 
 		}
 
 	def get(self):

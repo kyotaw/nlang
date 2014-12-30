@@ -35,7 +35,7 @@ class Vocabulary:
 					pos=tokens[3],
 					conj_form=conj_form,
 					conj_type=conj_type,
-					cost=cost,
+					cost=int(cost),
 					length=len(tokens[0].decode('utf-8'))
 				)
 				self.__words.insert(word['lemma'], word)
@@ -67,6 +67,6 @@ class Vocabulary:
 			last_index = i
 
 		unk_word = stream[:last_index+1]
-		tagged_word = TaggedWord(lemma=unk_word, pron='UNK', base='UNK', pos='UNK', cost='10', length=len(unk_word))
+		tagged_word = TaggedWord(lemma=unk_word, pron='UNK', base='UNK', pos='UNK', cost=10, length=len(unk_word))
 		return [tagged_word]
 
