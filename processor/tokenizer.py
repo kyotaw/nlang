@@ -13,21 +13,21 @@ class Tokenizer(object):
 		self.__bos_word = self.__vocab.word(lemma='BOS', pos='BOS')
 		self.__eos_word = self.__vocab.word(lemma='EOS', pos='EOS')
 	
-	def tag(self, sentence):
-		return self.__parse(sentence)
+	def tag(self, stream):
+		return self.__parse(stream)
 
-	def __parse(self, sentence):
+	def __parse(self, stream):
 		bos_node = {'word':self.__bos_word, 'total_cost':0, 'prev':None}
 		node_list = {}
 		node_list[0] = [bos_node]
 
-		length = len(sentence)
+		length = len(stream)
 		for i in range(0, length + 1):
 			if i not in node_list:
 				continue
 
 			if i < length:
-				words = self.__vocab.extract_words(sentence[i:])
+				words = self.__vocab.extract_words(stream[i:])
 			else:
 				words = [self.__eos_word]
 			
@@ -69,4 +69,4 @@ class Tokenizer(object):
 		result.insert(0, node['word']) #BOS
 
 		return result
-
+	

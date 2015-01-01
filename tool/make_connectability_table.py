@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from nlang.corpus.chasen.chasen_reader import ChasenCorpusReader
-from nlang.base.data.trie import Trie
 from nlang.analyzer.connectivity_analyzer import ConnectivityAnalyzer
 from nlang.tool.cost_calculator import calculate_cost
 import re, pprint

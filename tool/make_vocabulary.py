@@ -23,14 +23,6 @@ if len(sys.argv) > 3:
 	out_file = sys.argv[3]
 out_file += '.vocab'
 
-def analyze_func(analyzer, words):
-	analyzer.analyze(words)
-
-def vocab_func(vocab, words):
-	for word in words:
-		if word['pron']:
-			vocab.insert(word['pron'], word)
-
 start = datetime.datetime.now()
 
 vocab = Trie()
@@ -45,15 +37,10 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 			if word['pron']:
 				vocab.insert(word['pron'], word)
 		analyzer.analyze(words)
-#		analyze_thread = threading.Thread(target=analyze_func, args=(analyzer, words))
-#		analyze_thread.start()
-#		vocab_thread = threading.Thread(target=vocab_func, args=(vocab, words))
-#		vocab_thread.start()
-#		analyze_thread.join()
-#		vocab_thread.join()
 
 with open(out_file, 'wb') as f:
-	for tagged_word in vocab.dump():
+	for key_val in vocab.dump():
+		tagged_word = key_val[1]
 		line = u''
 		line += tagged_word['lemma'] + u'\t'
 		line += tagged_word['pron'] + u'\t'

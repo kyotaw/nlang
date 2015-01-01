@@ -10,8 +10,7 @@ class Trie:
 
 	def dump(self):
 		data = []
-		key = u''
-		self.__dump(self.root, key, data)
+		self.__dump(self.root, [], data)
 		return data
 
 	def count(self, key, value):
@@ -45,12 +44,15 @@ class Trie:
 			
 	def __dump(self, dict, key, data):
 		if 'value' in dict:
+			k = key[:]
 			for pkg in dict['value']:
-				data.append(pkg['data'])
+					data.append((k, pkg['data']))
+		
 		for k, v in dict.items():
 			if k != 'value':
-				key = key + k
-				self.__dump(v, key, data)
+				child_key = key[:]
+				child_key.append(k)
+				self.__dump(v, child_key, data)
 	
 	def __count(self, dict, key, value):
 		if key:
