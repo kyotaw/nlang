@@ -9,9 +9,6 @@ class ConnectivityAnalyzer:
 		self.pos_count = {}
 		self.bigram_count = Trie()
 
-	def analyze(self, tagged_words):
-		sentence = []
-
 	def probability(self, left_pos, right_pos):
 		if left_pos not in self.pos_count:
 			return 0
