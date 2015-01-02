@@ -15,6 +15,7 @@ class PhraseAnalyzer(object):
 		cur_phrase = ''
 		prev_iob = ''
 		prev_pos = 'BOS'
+		self.__add_pos_count(prev_pos)
 		for i in range(len(phrased_words[0])):
 			pos = phrased_words[0][i]['pos']
 			iob_phrase = phrased_words[1][i].split('-')
@@ -38,15 +39,19 @@ class PhraseAnalyzer(object):
 			elif iob_phrase[0] == 'I':
 				if prev_iob == 'B' or prev_iob == 'I':
 					pos_list.append(pos)
-				
-			if pos in self.__pos_count:
-				self.__pos_count[pos] += 1
-			else:
-				self.__pos_count[pos] = 1
-		
+			
+			self.__add_pos_count(pos)
 			prev_iob = iob_phrase[0]
 			prev_pos = pos
+
+		if prev_iob == 'B' or prev_iob == 'I':
+			if len(pos_list) > 0 and cur_phrase != '':
+				self.__phrase_pattern.insert(pos_list, cur_phrase)
+				self.__exit_conn.insert(prev_pos, 'EOS')
+				self.__add_phrase_count(cur_phrase)
 	
+		self.__add_pos_count('EOS')
+
 	def calc_phrase_probability(self):
 		phrase_list = []
 		for pattern_phrase in self.__phrase_pattern.dump():
@@ -85,7 +90,7 @@ class PhraseAnalyzer(object):
 			self.__phrase_count[phrase] = 1
 
 	def __add_pos_count(self, pos):
-		if pos in self.pos_count:
-			self.pos_count[pos] += 1
+		if pos in self.__pos_count:
+			self.__pos_count[pos] += 1
 		else:
-			self.pos_count[pos] = 1
+			self.__pos_count[pos] = 1

@@ -28,4 +28,4 @@ class ConnectivityTable:
 	def cost(self, left_pos, right_pos):
 		if left_pos == 'BOS' and right_pos == 'EOS':
 			return 10
-		return self.__table[left_pos][right_pos] if self.is_connectable(left_pos, right_pos) else DISCONNECTABLE_COST
+		return self.__table[left_pos][right_pos] if self.is_connectable(left_pos, right_pos) else ConnectivityTable.DISCONNECTABLE_COST

@@ -4,7 +4,7 @@ from nlang.base.data.trie import Trie
 from nlang.base.data.tagged_word import TaggedWord
 from nlang.base.util.util import *
 
-class Vocabulary:
+class Vocabulary(object):
 	def __init__(self, file_path):
 		self.__words = Trie()
 		
