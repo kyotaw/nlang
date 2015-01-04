@@ -2,7 +2,7 @@
 
 from nlang.corpus.chasen.chasen_reader import ChasenCorpusReader
 from nlang.analyzer.connectivity_analyzer import ConnectivityAnalyzer
-from nlang.tool.cost_calculator import calculate_cost
+from nlang.base.data.cost_calculator import calculate_cost
 import re, pprint
 import sys
 import glob

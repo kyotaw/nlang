@@ -9,7 +9,7 @@ import datetime
 import threading
 from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
 from nlang.analyzer.phrase_analyzer import PhraseAnalyzer
-from nlang.tool.cost_calculator import calculate_cost
+from nlang.base.data.cost_calculator import calculate_cost
 from nlang.base.data.trie import Trie
 
 if len(sys.argv) < 3:

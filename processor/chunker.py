@@ -31,7 +31,7 @@ class Chunker(object):
 				phrase = [node['phrase'][1]]
 				for i in range(start, end):
 					phrase.append(tagged_words[i+1]['lemma'])
-					result.insert(0, phrase)
+				result.insert(0, phrase)
 			node = node['prev']
 	
 		return result
