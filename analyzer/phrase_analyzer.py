@@ -11,6 +11,7 @@ class PhraseAnalyzer(object):
 		self.__exit_conn = Trie()
 
 	def analyze(self, phrased_words):
+		ret_phrase_list = []
 		pos_list = []
 		cur_phrase = ''
 		prev_iob = ''
@@ -25,6 +26,7 @@ class PhraseAnalyzer(object):
 						self.__phrase_pattern.insert(pos_list, cur_phrase)
 						self.__exit_conn.insert(prev_pos, pos)
 						self.__add_phrase_count(cur_phrase)
+						ret_phrase_list.append((cur_phrase, pos_list))
 				pos_list = []
 				cur_phrase = ''
 			elif iob_phrase[0] == 'B':
@@ -33,6 +35,7 @@ class PhraseAnalyzer(object):
 						self.__phrase_pattern.insert(pos_list, cur_phrase)
 						self.__exit_conn.insert(prev_pos, pos)
 						self.__add_phrase_count(cur_phrase)
+						ret_phrase_list.append((cur_phase, pos_list))
 				pos_list = [pos]
 				self.__enter_conn.insert(prev_pos, pos)
 				cur_phrase = iob_phrase[1]
@@ -49,8 +52,11 @@ class PhraseAnalyzer(object):
 				self.__phrase_pattern.insert(pos_list, cur_phrase)
 				self.__exit_conn.insert(prev_pos, 'EOS')
 				self.__add_phrase_count(cur_phrase)
+				ret_phrase_list.append((cur_phase, pos_list))
 	
 		self.__add_pos_count('EOS')
+
+		return ret_phrase_list
 
 	def calc_phrase_probability(self):
 		phrase_list = []

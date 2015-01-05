@@ -5,3 +5,4 @@ testdata/
 out.*
 out/
 .gitignore
+*_trainer.py

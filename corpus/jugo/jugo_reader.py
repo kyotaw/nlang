@@ -6,7 +6,7 @@ from nlang.corpus.jugo.jugo_word import JugoWord
 from nlang.base.data.tagged_word import TaggedWord
 
 class JugoCorpusReader(BaseReader):
-	def __init__(self, path, file_pattern, encoding):
+	def __init__(self, path, file_pattern='', encoding='utf-8'):
 		super(JugoCorpusReader, self).__init__(path, file_pattern, encoding)
 		
 	def read(self, file_path, encoding):
@@ -31,3 +31,4 @@ class JugoCorpusReader(BaseReader):
 					base=v.base('nlang')))
 			phrase.append(v.phrase())
 		return (words, phrase)
+

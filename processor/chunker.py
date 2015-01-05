@@ -16,25 +16,29 @@ class Chunker(object):
 	def phrase(self, tagged_words):
 		pos_list = []
 		for word in tagged_words:
-			if word['pos'] != 'BOS' and word['pos'] != 'EOS':
-				pos_list.append(word['pos'])
+			pos_list.append(word['pos'])
 	
 		node_list = self.__extract_phrase_paths(pos_list)
 		eos_node = self.__shortest_path_vitervi(node_list, len(pos_list))
+		
+		return self.__summarize(eos_node, tagged_words)
 
-		result = []
-		node = eos_node
-		while node['prev']:
-			if node['phrase'][1] != 'EOS':
-				start = node['start_index']
-				end = node['end_index']
-				phrase = [node['phrase'][1]]
-				for i in range(start, end):
-					phrase.append(tagged_words[i+1]['lemma'])
-				result.insert(0, phrase)
-			node = node['prev']
+	def train(self, tagged_words, answer_phrase_list):
+
+		result = self.phrase(tagged_words)	
 	
-		return result
+		phrase_list = []
+		for phrase in result:
+			phrase_list.append((phrase[0], [w['pos'] for w in phrase[1]]))	
+
+		if phrase_list != answer_phrase_list:
+			for answer in answer_phrase_list:
+				phrase = self.__phrase.phrase(answer[1], answer[0])
+				phrase[2] += 1
+			for wrong in phrase_list:
+				phrase = self.__phrase.phrase(wrong[1], wrong[0])
+				phrase[2] -= 1
+
 	
 	def __extract_phrase_paths(self, pos_list):
 		bos_node = {'phrase':self.__bos_phrase, 'total_cost':0, 'prev':None}
@@ -101,3 +105,15 @@ class Chunker(object):
 							right_node['prev'] = left_node
 		
 		return node_list[1][length+1][0]
+
+	def __summarize(self, eos_node, tagged_words):
+		result = []
+		node = eos_node
+		while node['prev']:
+			if node['phrase'][1] != 'EOS':
+				start = node['start_index']
+				end = node['end_index']
+				word_list = [tagged_words[i] for i in range(start, end)]
+				result.insert(0, (node['phrase'][1], word_list))
+			node = node['prev']
+		return result

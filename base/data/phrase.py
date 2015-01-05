@@ -7,8 +7,8 @@ class Phrase(object):
 	def __init__(self, file_path):
 		self.__phrases = Trie()
 		
-		self.__phrases.insert(['BOS'], (['BOS'], 'BOS', 0))
-		self.__phrases.insert(['EOS'], (['EOS'], 'EOS', 0))
+		self.__phrases.insert(['BOS'], [['BOS'], 'BOS', 0])
+		self.__phrases.insert(['EOS'], [['EOS'], 'EOS', 0])
 
 		with open(file_path, 'r') as f:
 			line = f.readline()
@@ -18,12 +18,12 @@ class Phrase(object):
 					continue
 				
 				pos_list = tokens[0].split(' ')
-				self.__phrases.insert(pos_list, (pos_list, tokens[1], int(tokens[2])))
+				self.__phrases.insert(pos_list, [pos_list, tokens[1], int(tokens[2])])
 				line = f.readline()
 
 	def phrase(self, pos_list, phrase):
-		not_found = ([], '', 0)
-		cands = self.__phrases.common_prefix_search(pos_list)
+		not_found = [[], '', 0]
+		cands = self.__phrases.get(pos_list)
 		for p in cands:
 			if phrase == p[1]:
 				return p
