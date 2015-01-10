@@ -8,10 +8,9 @@ from nlang.base.system import env
 class Chunker(object):
 	def __init__(self):
 		self.__phrase = Phrase(env.phrasefile_path())
-		self.__enter_conn = ConnectivityTable(env.phrase_enter_connfile_path())
-		self.__exit_conn = ConnectivityTable(env.phrase_exit_connfile_path())
-		self.__bos_phrase = self.__phrase.phrase(pos_list=['BOS'], phrase='BOS')
-		self.__eos_phrase = self.__phrase.phrase(pos_list=['EOS'], phrase='EOS')
+		self.__iob_conn = ConnectivityTable(env.phrase_iob_connfile_path())
+		self.__bos_phrase = self.__phrase.phrase(pos='BOS', phrase='O')
+		self.__eos_phrase = self.__phrase.phrase(pos='EOS', phrase='O')
 
 	def phrase(self, tagged_words):
 		pos_list = []
@@ -34,10 +33,10 @@ class Chunker(object):
 		if phrase_list != answer_phrase_list:
 			for answer in answer_phrase_list:
 				phrase = self.__phrase.phrase(answer[1], answer[0])
-				phrase[2] += 1
+				phrase[2] += 5
 			for wrong in phrase_list:
 				phrase = self.__phrase.phrase(wrong[1], wrong[0])
-				phrase[2] -= 1
+				phrase[2] -= 5
 
 	
 	def __extract_phrase_paths(self, pos_list):
@@ -52,7 +51,7 @@ class Chunker(object):
 				continue
 
 			if i < length:
-				phrases = self.__phrase.extract_phrases(pos_list[i:])
+				phrases = self.__phrase.extract_phrases(pos_list[i])
 				if len(phrases) == 0:
 					phrases = [([pos_list[i]], 'O', 10)]
 			else:
@@ -63,10 +62,10 @@ class Chunker(object):
 				new_node = {'phrase':phrase, 'total_cost':0, 'prev':None}
 				start_node_list[i].append(new_node)
 				for left_node in end_node_list[i]:
-					left_pos = left_node['phrase'][0][-1]
-					right_pos = phrase[0][0]
-					if True or self.__enter_conn.is_connectable(left_pos, right_pos) or left_pos == 'BOS' or right_pos == 'EOS':
-						index = i + len(phrase[0])
+					left_iob = left_node['phrase'][1]
+					right_iob = phrase[1]
+					if self.__iob_conn.is_connectable(left_iob, right_iob):
+						index = i + 1
 						new_node['start_index'] = i
 						new_node['end_index'] = index
 						if index not in end_node_list:
@@ -84,9 +83,9 @@ class Chunker(object):
 				min_cost = sys.maxint
 				min_cost_nodes = []
 				for left_node in end_nodes:
-					left_pos = left_node['phrase'][0][-1]
-					right_pos = right_node['phrase'][0][-1]
-					total_cost = left_node['total_cost'] + right_node['phrase'][2] + self.__enter_conn.cost(left_pos, right_pos)
+					left_iob = left_node['phrase'][1]
+					right_iob = right_node['phrase'][1]
+					total_cost = left_node['total_cost'] + right_node['phrase'][2] + self.__iob_conn.cost(left_iob, right_iob)
 						
 					if total_cost < min_cost:
 						min_cost = total_cost
@@ -97,12 +96,7 @@ class Chunker(object):
 			
 				if len(min_cost_nodes) > 0:
 					right_node['total_cost'] = min_cost
-					max_len = -1
-					for min_node in min_cost_nodes:
-						l = len(min_node['phrase'][0])	+ len(right_node['phrase'][0])
-						if max_len < l:
-							max_len = l
-							right_node['prev'] = left_node
+					right_node['prev'] = min_cost_nodes[0]
 		
 		return node_list[1][length+1][0]
 
@@ -110,10 +104,10 @@ class Chunker(object):
 		result = []
 		node = eos_node
 		while node['prev']:
-			if node['phrase'][1] != 'EOS':
+			if node['phrase'][0] != 'EOS':
 				start = node['start_index']
 				end = node['end_index']
-				word_list = [tagged_words[i] for i in range(start, end)]
+				word_list = [tagged_words[i]['lemma'] for i in range(start, end)]
 				result.insert(0, (node['phrase'][1], word_list))
 			node = node['prev']
 		return result

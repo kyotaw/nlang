@@ -62,11 +62,10 @@ class Tokenizer(object):
 						node_list[index].append(new_node)
 	
 		result = []
-		node = node_list[length+1][0] #EOS
+		node = node_list[length+1][0]['prev'] #EOS
 		while node['prev']:
 			result.insert(0, node['word'])
 			node = node['prev']
-		result.insert(0, node['word']) #BOS
 
 		return result
 	

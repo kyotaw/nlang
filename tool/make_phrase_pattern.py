@@ -40,17 +40,8 @@ with open(out_file + '.phrase', 'wb') as f:
 		line += str(calculate_cost(phrase[2])) + '\n'
 		f.write(line.encode('utf-8'))
 
-with open(out_file + '.ph_enter_conn', 'wb') as f:
+with open(out_file + '.iob_conn', 'wb') as f:
 	for left_pos, right_pos_list in analyzer.calc_enter_conn_probability().items():
-		line = u''
-		line += left_pos 
-		for right_pos in right_pos_list:
-			line += '\t' + right_pos[0] + ':' + str(calculate_cost(right_pos[1]))
-		line += '\n'
-		f.write(line.encode('utf-8'))
-
-with open(out_file + '.ph_exit_conn', 'wb') as f:
-	for left_pos, right_pos_list in analyzer.calc_exit_conn_probability().items():
 		line = u''
 		line += left_pos 
 		for right_pos in right_pos_list:
