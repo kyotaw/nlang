@@ -53,7 +53,7 @@ class Chunker(object):
 			if i < length:
 				phrases = self.__phrase.extract_phrases(pos_list[i])
 				if len(phrases) == 0:
-					phrases = [([pos_list[i]], 'O', 10)]
+					phrases = [(pos_list[i], 'O', 10)]
 			else:
 				phrases = [self.__eos_phrase]
 		

@@ -30,6 +30,6 @@ class Phrase(object):
 		return not_found
 
 	def extract_phrases(self, pos):
-		return self.__phrases.common_prefix_search(pos)	
+		return self.__phrases.get(pos)	
 
 
