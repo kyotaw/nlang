@@ -29,6 +29,6 @@ class JugoCorpusReader(BaseReader):
 					conj_form=v.conj_form('nlang'),
 					conj_type=v.conj_type('nlang'),
 					base=v.base('nlang')),
-				)
+				))
 		return words
 

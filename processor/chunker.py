@@ -26,20 +26,23 @@ class Chunker(object):
 
 		result_words = self.phrase(tagged_words)	
 	
-		answer_phrase_list = [(word[0], worda[1]['pos']) for word in answer_phrased_words]
-		result_phrase_list = [(word[0], worda[1]['pos']) for word in result_words]
-
-		for i in range(result_phrase_list):
-			result = result_phrase_list[i]
-			answer = answer_phrase_list[i]
-			if result != answer:
-				right = self.__phrase.phrase(answer[1], answer[0])
-				right[2] += 1
-				wrong = self.__phrase.phrase(reslut[1], result[0])
-				wrong[2] -= 1
-			else:
-				right = self.__phrase.phrase(answer[1], answer[0])
-				right[2] += 1
+		answer_phrase_list = [(word[0], word[1]['pos']) for word in answer_phrased_words]
+		result_phrase_list = [(word[0], word[1]['pos']) for word in result_words]
+		
+		if result_phrase_list != answer_phrase_list:
+			for i in range(len(result_phrase_list)):
+				answer = answer_phrase_list[i]
+				result = result_phrase_list[i]
+				if result != answer:
+					right = self.__phrase.phrase(answer[1], answer[0])
+					right[2] -= 1
+					wrong = self.__phrase.phrase(result[1], result[0])
+					wrong[2] += 1
+					if i != 0:
+						right_cost = self.__iob_conn.cost(answer_phrase_list[i-1][0], answer[0])
+						self.__iob_conn.set_cost(answer_phrase_list[i-1][0], answer[0], right_cost - 1)
+						wrong_cost = self.__iob_conn.cost(result_phrase_list[i-1][0], result[0])
+						self.__iob_conn.set_cost(result_phrase_list[i-1][0], result[0], wrong_cost + 1)
 	
 	def __extract_phrase_paths(self, pos_list):
 		bos_node = {'phrase':self.__bos_phrase, 'total_cost':0, 'prev':None}
@@ -108,8 +111,6 @@ class Chunker(object):
 		while node['prev']:
 			if node['phrase'][0] != 'EOS':
 				start = node['start_index']
-				end = node['end_index']
-				word_list = [tagged_words[i]['lemma'] for i in range(start, end)]
-				result.insert(0, (node['phrase'][1], word_list))
+				result.insert(0, (node['phrase'][1], tagged_words[start]))
 			node = node['prev']
 		return result

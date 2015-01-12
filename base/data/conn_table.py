@@ -31,6 +31,6 @@ class ConnectivityTable:
 		return self.__table[left_pos][right_pos] if self.is_connectable(left_pos, right_pos) else ConnectivityTable.DISCONNECTABLE_COST
 
 	def set_cost(self, left_pos, right_pos, cost):
-		if left_pos not in right_pos:
+		if left_pos not in self.__table:
 			self.__table[left_pos] = {}
 		self.__table[left_pos][right_pos] = cost

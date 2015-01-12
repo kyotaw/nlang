@@ -12,8 +12,8 @@ class PhraseAnalyzer(object):
 		prev_iob = 'O'
 		self.__add_iob_count(prev_iob)
 		for i in range(len(phrased_words[0])):
-			pos = phrased_words[0][i]['pos']
-			iob = phrased_words[1][i]
+			iob = phrased_words[i][0]
+			pos = phrased_words[i][1]['pos']
 			self.__pos_iob_count.insert(pos, iob)
 			self.__iob_conn.insert(prev_iob, iob)
 			self.__add_iob_count(iob)
