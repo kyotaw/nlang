@@ -23,6 +23,38 @@ class PhraseAnalyzer(object):
 		self.__add_iob_count('O')
 		self.__iob_conn.insert(prev_iob, 'O')
 
+	def unpack(self, phrased_words, feature='lemma'):
+		ret_phrase_list = []
+		feature_list = []
+		cur_phrase = ''
+		prev_iob = ''
+		for i in range(len(phrased_words[0])):
+			word = phrased_words[i]
+			iob_phrase = word[0].split('-')
+			f = word[1][feature]
+			if iob_phrase[0] == 'O':
+				if prev_iob == 'B' or prev_iob == 'I':
+					if len(feature_list) > 0 and cur_phrase != '':
+						ret_phrase_list.append((cur_phrase, feature_list))
+						feature_list = []
+						cur_phrase = ''
+			elif iob_phrase[0] == 'B':
+				if prev_iob == 'B' or prev_iob == 'I':
+					if len(feature_list) > 0 and cur_phrase != '':
+						ret_phrase_list.append((cur_phase, feature_list))
+						feature_list = [f]
+						cur_phrase = iob_phrase[1]
+			elif iob_phrase[0] == 'I':
+					if prev_iob == 'B' or prev_iob == 'I':
+						feature_list.append(f)
+						prev_iob = iob_phrase[0]
+
+		if prev_iob == 'B' or prev_iob == 'I':
+			if len(feature_list) > 0 and cur_phrase != '':
+				ret_phrase_list.append((cur_phase, feature_list))
+	
+		return ret_phrase_list
+
 	def calc_phrase_probability(self):
 		phrase_list = []
 		for pos_iob in self.__pos_iob_count.dump():

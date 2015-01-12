@@ -19,16 +19,16 @@ class JugoCorpusReader(BaseReader):
 
 	def tagged_words(self):
 		words = []
-		phrase = []
 		for v in self.vocabulary:
 			words.append(
+				(v.phrase(),
 				TaggedWord(
 					lemma=v.lemma('nlang'),
 					pron=v.pron('nlang'),
 					pos=v.pos('nlang'),
 					conj_form=v.conj_form('nlang'),
 					conj_type=v.conj_type('nlang'),
-					base=v.base('nlang')))
-			phrase.append(v.phrase())
-		return (words, phrase)
+					base=v.base('nlang')),
+				)
+		return words
 

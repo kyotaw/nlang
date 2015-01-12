@@ -22,22 +22,24 @@ class Chunker(object):
 		
 		return self.__summarize(eos_node, tagged_words)
 
-	def train(self, tagged_words, answer_phrase_list):
+	def train(self, tagged_words, answer_phrased_words):
 
-		result = self.phrase(tagged_words)	
+		result_words = self.phrase(tagged_words)	
 	
-		phrase_list = []
-		for phrase in result:
-			phrase_list.append((phrase[0], [w['pos'] for w in phrase[1]]))	
+		answer_phrase_list = [(word[0], worda[1]['pos']) for word in answer_phrased_words]
+		result_phrase_list = [(word[0], worda[1]['pos']) for word in result_words]
 
-		if phrase_list != answer_phrase_list:
-			for answer in answer_phrase_list:
-				phrase = self.__phrase.phrase(answer[1], answer[0])
-				phrase[2] += 5
-			for wrong in phrase_list:
-				phrase = self.__phrase.phrase(wrong[1], wrong[0])
-				phrase[2] -= 5
-
+		for i in range(result_phrase_list):
+			result = result_phrase_list[i]
+			answer = answer_phrase_list[i]
+			if result != answer:
+				right = self.__phrase.phrase(answer[1], answer[0])
+				right[2] += 1
+				wrong = self.__phrase.phrase(reslut[1], result[0])
+				wrong[2] -= 1
+			else:
+				right = self.__phrase.phrase(answer[1], answer[0])
+				right[2] += 1
 	
 	def __extract_phrase_paths(self, pos_list):
 		bos_node = {'phrase':self.__bos_phrase, 'total_cost':0, 'prev':None}
