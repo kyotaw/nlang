@@ -34,3 +34,11 @@ class ConnectivityTable:
 		if left_pos not in self.__table:
 			self.__table[left_pos] = {}
 		self.__table[left_pos][right_pos] = cost
+
+	def dump(self):
+		conn = []
+		for left, right_list in self.__table:
+			for right, cost in self.table[left]:
+				conn.append((left, right, cost))
+		return conn
+

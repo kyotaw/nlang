@@ -23,7 +23,8 @@ class Chunker(object):
 		
 		result_phrase_list = [(word[0], word[1]['pos']) for word in result_words]
 		
-		if result_phrase_list != answer_phrase_list:
+		match = result_phrase_list == answer_phrase_list
+		if not match:
 			for i in range(len(result_phrase_list)):
 				answer = answer_phrase_list[i]
 				result = result_phrase_list[i]
@@ -37,9 +38,10 @@ class Chunker(object):
 						self.__iob_conn.set_cost(answer_phrase_list[i-1][0], answer[0], right_cost - 1)
 						wrong_cost = self.__iob_conn.cost(result_phrase_list[i-1][0], result[0])
 						self.__iob_conn.set_cost(result_phrase_list[i-1][0], result[0], wrong_cost + 1)
-			return False
 		
-		return True
+		self.__reqularize_l1()
+
+		return match
 
 	def __phrase(self, tagged_words, phrase_cost_func, conn_cost_func):
 		pos_list = []
@@ -147,8 +149,27 @@ class Chunker(object):
 				right_iob = right_node['phrase'][1]
 				return self.__iob_conn.cost(left_iob, right_iob)
 			return get_conn_cost
-				
-				
+	
+	def __regularize_l1(self):
+		def regularize(cost, eta):
+			if cost > 0:
+				if cost - eta > 0:
+					cost -= eta
+				else:
+					cost = 0
+			else:
+				if cost + eta < 0:
+					cost += eta
+				else:
+					cost = 0
+			return cost
+
+		for pos, phrase in self.__phrases.dump():
+			phrase[2] = reguralize(phrase[2], self.__ETA)
+
+		for conn in self.__iob_conn.dump():
+			self.__iob_conn.set_cost(conn[0], conn[1], regularize(conn[2], self.__ETA))
+			
 	def __summarize(self, eos_node, tagged_words):
 		result = []
 		node = eos_node

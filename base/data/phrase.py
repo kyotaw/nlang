@@ -30,6 +30,9 @@ class Phrase(object):
 		return not_found
 
 	def extract_phrases(self, pos):
-		return self.__phrases.get(pos)	
+		return self.__phrases.get(pos)
+
+	def dump(self):
+		return self.__dump()
 
 
