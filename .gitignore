@@ -1,8 +1,6 @@
 testdata/
 *.pyc
-*.test.py
 *.priv.py
 out.*
 out/
 .gitignore
-*_trainer.py
