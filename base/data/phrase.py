@@ -33,6 +33,6 @@ class Phrase(object):
 		return self.__phrases.get(pos)
 
 	def dump(self):
-		return self.__dump()
+            return self.__phrases.dump()
 
 

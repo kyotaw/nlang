@@ -22,6 +22,14 @@ def phrasefile_path():
 	option = __get_option('PHRASEFILE_PATH')
 	return option if option != '' else NLANG_ROOT + 'data/phrase/master/master.phrase'
 
+def ready_made_tokenizer():
+    option = __get_option('READYMADE_TOKENIZER')
+    return option if option != '' else NLANG_ROOT + 'data/instance/tokenizer.pickle'
+
+def ready_made_chunker():
+    option = __get_option('READYMADE_CHUNKER')
+    return option if option != '' else NLANG_ROOT + 'data/instance/chunker.pickle'
+
 def __get_option(item):
 	return options[item] if item in options else ''
 

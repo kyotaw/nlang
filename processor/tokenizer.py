@@ -1,13 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import os 
+import pickle
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.base.data.vocabulary import Vocabulary
 from nlang.base.util.util import pp
 from nlang.base.system import env
-import sys
 
 class Tokenizer(object):
-	def __init__(self):
+        @classmethod
+        def create(cls):
+            pickls = env.ready_made_tokenizer()
+            if os.path.exists(pickls):
+                with open(pickls, 'rb') as f:
+                    return pickle.load(f)
+            return cls()
+	
+        def __init__(self):
 		self.__conn_table = ConnectivityTable(env.connfile_path())
 		self.__vocab = Vocabulary(env.vocabfile_path())
 		self.__bos_word = self.__vocab.word(lemma='BOS', pos='BOS')

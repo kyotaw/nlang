@@ -1,20 +1,32 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
+import pickle
 from nlang.base.data.phrase import Phrase
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.base.system import env
 
 class Chunker(object):
-	def __init__(self):
+        __penalty = 1
+	__eta = 1
+
+        @classmethod
+        def create(cls):
+            pickls = env.ready_made_chunker()
+            if os.path.exists(pickls):
+                with open(pickls, 'rb') as f:
+                    return pickle.load(f)
+            return cls()
+	
+        def __init__(self):
 		self.__phrases = Phrase(env.phrasefile_path())
 		self.__iob_conn = ConnectivityTable(env.phrase_iob_connfile_path())
 		self.__bos_phrase = self.__phrases.phrase(pos='BOS', phrase='O')
 		self.__eos_phrase = self.__phrases.phrase(pos='EOS', phrase='O')
-		self.__penalty = 1
 
 	def phrase(self, tagged_words):
-		return self.__phrase(tagged_words, self.__get_phrase_cost_func(), self.__get_conn_cost_func())
+		return self.__interpret(self.__phrase(tagged_words, self.__get_phrase_cost_func(), self.__get_conn_cost_func()), 'lemma')
 
 	def train(self, tagged_words, answer_phrased_words):
 		answer_phrase_list = [(word[0], word[1]['pos']) for word in answer_phrased_words]
@@ -39,7 +51,7 @@ class Chunker(object):
 						wrong_cost = self.__iob_conn.cost(result_phrase_list[i-1][0], result[0])
 						self.__iob_conn.set_cost(result_phrase_list[i-1][0], result[0], wrong_cost + 1)
 		
-		self.__reqularize_l1()
+		self.__regularize_l1()
 
 		return match
 
@@ -165,10 +177,10 @@ class Chunker(object):
 			return cost
 
 		for pos, phrase in self.__phrases.dump():
-			phrase[2] = reguralize(phrase[2], self.__ETA)
+			phrase[2] = regularize(phrase[2], self.__eta)
 
 		for conn in self.__iob_conn.dump():
-			self.__iob_conn.set_cost(conn[0], conn[1], regularize(conn[2], self.__ETA))
+                    self.__iob_conn.set_cost(conn[0], conn[1], regularize(conn[2], self.__eta))
 			
 	def __summarize(self, eos_node, tagged_words):
 		result = []
@@ -180,35 +192,35 @@ class Chunker(object):
 			node = node['prev']
 		return result
 	
-	def __unpack(self, phrased_words, feature):
-		ret_phrase_list = []
-		feature_list = []
-		cur_phrase = ''
-		prev_iob = ''
-		for i in range(len(phrased_words[0])):
-			word = phrased_words[i]
-			iob_phrase = word[0].split('-')
-			f = word[1][feature] if feature else word[1]
-			if iob_phrase[0] == 'O':
-				if prev_iob == 'B' or prev_iob == 'I':
-					if len(feature_list) > 0 and cur_phrase != '':
-						ret_phrase_list.append((cur_phrase, feature_list))
-						feature_list = []
-						cur_phrase = ''
-			elif iob_phrase[0] == 'B':
-				if prev_iob == 'B' or prev_iob == 'I':
-					if len(feature_list) > 0 and cur_phrase != '':
-						ret_phrase_list.append((cur_phase, feature_list))
-						feature_list = [f]
-						cur_phrase = iob_phrase[1]
-			elif iob_phrase[0] == 'I':
-					if prev_iob == 'B' or prev_iob == 'I':
-						feature_list.append(f)
-						prev_iob = iob_phrase[0]
+        def __interpret(self, phrased_words, feature):
+	    ret_phrase_list = []
+	    feature_list = []
+	    cur_phrase = ''
+            prev_iob = ''
+	    for i in range(len(phrased_words)):
+		word = phrased_words[i]
+		iob_phrase = word[0].split('-')
+		f = word[1][feature] if feature else word[1]
+		if iob_phrase[0] == 'O':
+		    if prev_iob == 'B' or prev_iob == 'I':
+		        if len(feature_list) > 0 and cur_phrase != '':
+			    ret_phrase_list.append((cur_phrase, feature_list))
+			    feature_list = []
+			    cur_phrase = ''
+                    ret_phrase_list.append((iob_phrase[0], [f]))
+		elif iob_phrase[0] == 'B':
+		    if prev_iob == 'B' or prev_iob == 'I':
+		        if len(feature_list) > 0 and cur_phrase != '':
+			    ret_phrase_list.append((cur_phase, feature_list))
+                    feature_list = [f]
+		    cur_phrase = iob_phrase[1]
+		elif iob_phrase[0] == 'I':
+		    if prev_iob == 'B' or prev_iob == 'I':
+		        feature_list.append(f)
+                prev_iob = iob_phrase[0]
 
-		if prev_iob == 'B' or prev_iob == 'I':
-			if len(feature_list) > 0 and cur_phrase != '':
-				ret_phrase_list.append((cur_phase, feature_list))
+	    if prev_iob == 'B' or prev_iob == 'I':
+	        if len(feature_list) > 0 and cur_phrase != '':
+		    ret_phrase_list.append((cur_phase, feature_list))
 	
-		return ret_phrase_list
-	
+	    return ret_phrase_list

@@ -3,4 +3,6 @@ testdata/
 *.priv.py
 out.*
 out/
+dev/
 .python-version
+tokenizer.pickle

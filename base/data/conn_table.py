@@ -37,8 +37,8 @@ class ConnectivityTable:
 
 	def dump(self):
 		conn = []
-		for left, right_list in self.__table:
-			for right, cost in self.table[left]:
+		for left, right_list in self.__table.items():
+			for right, cost in self.__table[left].items():
 				conn.append((left, right, cost))
 		return conn
 

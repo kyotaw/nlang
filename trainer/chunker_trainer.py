@@ -1,24 +1,35 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import pickle
+import os
+import glob
 from nlang.processor.chunker import Chunker
-from nlang.analyzer.phrase_analyzer import PhraseAnalyzer
 from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
-from nlang.base.util.util import pp
 
-reader = JugoCorpusReader('../testdata/phrase/yahoo-0001.chasen')
-jugo_words = reader.tagged_words()
+if len(sys.argv) < 3:
+	print('usage chunker_trainer.py baseDir fileNamePattern train_count')
+	quit()
 
-tagged_words = [w[1] for w in jugo_words]
+baseDir = sys.argv[1]
+pattern = sys.argv[2]
+count = 100
+if len(sys.argv) > 3:
+    count = sys.argv[3]
 
 chunker = Chunker()
-for i in range(100):
-	chunker.train(tagged_words, jugo_words)
+for dir_path, sub_dirs, file_names in os.walk(baseDir):
+	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
+	for file in file_list:
+            reader = JugoCorpusReader(file)
+            jugo_words = reader.tagged_words()
+            tagged_words = [w[1] for w in jugo_words]
+            for i in range(int(count)):
+                if chunker.train(tagged_words, jugo_words):
+                    print('passed: ' + file)
+                    break
 
-rr = chunker.phrase(tagged_words)
+with open('chuncker.pickle', 'wb') as f:
+    pickle.dump(chunker, f)
 
-result = []
-for p in rr:
-	result.append((p[0], p[1]['lemma']))
-
-print(pp(result))
 
