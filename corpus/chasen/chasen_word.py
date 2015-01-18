@@ -23,7 +23,7 @@ class ChasenWord(object):
 		self.__base = tokens[2]
 		parts = tokens[3].split('-')
 		self.__parts = (p for p in parts)
-		if len(tokens) == 6:
+		if len(tokens) >= 6:
 			self.__conj_form = tokens[4]
 			self.__conj_type = tokens[5]
 		else:

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from nlang.corpus.chasen.chasen_reader import ChasenCorpusReader
+from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
 from nlang.analyzer.connectivity_analyzer import ConnectivityAnalyzer
 from nlang.base.data.cost_calculator import calculate_cost
 import re, pprint
@@ -29,8 +30,14 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
 		print('analyzing ' + file)
-		r = ChasenCorpusReader(file, '', 'utf-8')
-		analyzer.analyze(r.tagged_words())
+                root, ext = os.path.splitext(file)
+                r = None
+                if ext == ".chasen":
+		    r = ChasenCorpusReader(file, '', 'utf-8')
+                elif ext == ".jugo":
+                    r = JugoCorpusReader(file, '', 'utf-8')
+                if r:
+                    analyzer.analyze(r.tagged_words())
 
 print('writing connectivity table...')
 

@@ -4,5 +4,6 @@ testdata/
 out.*
 out/
 dev/
+corpus/
 .python-version
 tokenizer.pickle

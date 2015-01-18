@@ -20,8 +20,8 @@ class Chunker(object):
             return cls()
 	
         def __init__(self):
-		self.__phrases = Phrase(env.phrasefile_path())
-		self.__iob_conn = ConnectivityTable(env.phrase_iob_connfile_path())
+		self.__phrases = Phrase(env.trained_phrasefile_path())
+		self.__iob_conn = ConnectivityTable(env.trained_phrase_iob_connfile_path())
 		self.__bos_phrase = self.__phrases.phrase(pos='BOS', phrase='O')
 		self.__eos_phrase = self.__phrases.phrase(pos='EOS', phrase='O')
 

@@ -18,9 +18,17 @@ def phrase_iob_connfile_path():
 	option = __get_option('PHRASE_IOB_CONNFILE_PATH')
 	return option if option != '' else NLANG_ROOT + 'data/phrase/master/master.iob_conn'
 
+def trained_phrase_iob_connfile_path():
+	option = __get_option('TRAINED_PHRASE_IOB_CONNFILE_PATH')
+	return option if option != '' else NLANG_ROOT + 'data/phrase/master/master.iob_conn.trained'
+
 def phrasefile_path():
 	option = __get_option('PHRASEFILE_PATH')
 	return option if option != '' else NLANG_ROOT + 'data/phrase/master/master.phrase'
+
+def trained_phrasefile_path():
+	option = __get_option('TRAINED_PHRASEFILE_PATH')
+	return option if option != '' else NLANG_ROOT + 'data/phrase/master/master.phrase.trained'
 
 def ready_made_tokenizer():
     option = __get_option('READYMADE_TOKENIZER')

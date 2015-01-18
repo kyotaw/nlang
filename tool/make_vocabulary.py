@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from nlang.corpus.chasen.chasen_reader import ChasenCorpusReader
+from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
 from nlang.base.data.trie import Trie
 from nlang.analyzer.vocabulary_analyzer import VocabularyAnalyzer
-from nlang.tool.cost_calculator import calculate_cost
+from nlang.base.data.cost_calculator import calculate_cost
 import re, pprint
 import sys
 import glob
@@ -31,12 +32,18 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
 		print('analyzing ' + file)
-		r = ChasenCorpusReader(file, '', 'utf-8')
-		words = r.tagged_words()
-		for word in words:
-			if word['pron']:
-				vocab.insert(word['pron'], word)
-		analyzer.analyze(words)
+                root, ext = os.path.splitext(file)
+                r = None
+                if ext == ".chasen":
+		    r = ChasenCorpusReader(file, '', 'utf-8')
+                elif ext == ".jugo":
+                    r = JugoCorpusReader(file, '', 'utf-8')
+                if r:
+                    words = r.tagged_words()
+		    for word in words:
+		    	if word['pron']:
+		    	    vocab.insert(word['pron'], word)
+		    analyzer.analyze(words)
 
 with open(out_file, 'wb') as f:
 	for key_val in vocab.dump():

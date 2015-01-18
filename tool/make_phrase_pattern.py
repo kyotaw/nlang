@@ -30,7 +30,7 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	for file in file_list:
 		print('analyzing ' + file)
 		r = JugoCorpusReader(file, '', 'utf-8')
-		analyzer.analyze(r.tagged_words())
+		analyzer.analyze(r.phrased_words())
 
 with open(out_file + '.phrase', 'wb') as f:
 	for phrase in analyzer.calc_phrase_probability():
