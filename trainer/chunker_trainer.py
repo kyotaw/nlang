@@ -23,19 +23,19 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
             reader = JugoCorpusReader(file)
-            jugo_words = reader.phrased_words()
+            jugo_words = reader.claused_words()
             tagged_words = [w[1] for w in jugo_words]
             for i in range(int(count)):
                 if chunker.train(tagged_words, jugo_words):
                     print('passed: ' + file)
                     break
 
-with open('out.phrase.trained', 'wb') as f:
-	for phrase in chunker._Chunker__phrases.dump():
+with open('out.clause.trained', 'wb') as f:
+	for clause in chunker._Chunker__clauses.dump():
 		line = u''
-		line += phrase[1][0] + '\t'
-		line += phrase[1][1] + '\t'
-		line += str(phrase[1][2]) + '\n'
+		line += clause[1][0] + '\t'
+		line += clause[1][1] + '\t'
+		line += str(clause[1][2]) + '\n'
 		f.write(line.encode('utf-8'))
 
 with open('out.iob_conn.trained', 'wb') as f:

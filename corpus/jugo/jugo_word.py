@@ -19,11 +19,11 @@ class JugoWord(ChasenWord):
 
 		tokens = raw[:-1].split('\t')
 		if len(tokens) == 5:
-			self.__phrase = tokens[4]
+			self.__clause = tokens[4]
 		elif  len(tokens) == 7:
-			self.__phrase = tokens[6]
+			self.__clause = tokens[6]
 		else:
-			self.__phrase = 'O'
+			self.__clause = 'O'
 		
 		return True
 
@@ -45,7 +45,7 @@ class JugoWord(ChasenWord):
 	def conj_type(self, format='chasen'):
 		return super(JugoWord, self).conj_type(format)
 	
-	def phrase(self, format='jugo'):
-		return self.__phrase
+	def clause(self, format='jugo'):
+		return self.__clause
 
 			

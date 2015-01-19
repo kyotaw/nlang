@@ -8,12 +8,12 @@ import os
 import datetime
 import threading
 from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
-from nlang.analyzer.phrase_analyzer import PhraseAnalyzer
+from nlang.analyzer.clause_analyzer import ClauseAnalyzer
 from nlang.base.data.cost_calculator import calculate_cost
 from nlang.base.data.trie import Trie
 
 if len(sys.argv) < 3:
-	print('usage make_phrase_pattern.py baseDir fileNamePattern outFileName')
+	print('usage make_clause_pattern.py baseDir fileNamePattern outFileName')
 	quit()
 
 baseDir = sys.argv[1]
@@ -24,20 +24,20 @@ if len(sys.argv) > 3:
 
 start = datetime.datetime.now()
 
-analyzer = PhraseAnalyzer()
+analyzer = ClauseAnalyzer()
 for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
 		print('analyzing ' + file)
 		r = JugoCorpusReader(file, '', 'utf-8')
-		analyzer.analyze(r.phrased_words())
+		analyzer.analyze(r.claused_words())
 
-with open(out_file + '.phrase', 'wb') as f:
-	for phrase in analyzer.calc_phrase_probability():
+with open(out_file + '.clause', 'wb') as f:
+	for clause in analyzer.calc_clause_probability():
 		line = u''
-		line += phrase[0] + '\t'
-		line += phrase[1] + '\t'
-		line += str(calculate_cost(phrase[2])) + '\n'
+		line += clause[0] + '\t'
+		line += clause[1] + '\t'
+		line += str(calculate_cost(clause[2])) + '\n'
 		f.write(line.encode('utf-8'))
 
 with open(out_file + '.iob_conn', 'wb') as f:

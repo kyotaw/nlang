@@ -12,9 +12,6 @@ for f in r:
 	ff.append((f['lemma'], f['pos']))
 print pp(ff)
 c = Chunker()
-rr = c.phrase(r)
+rr = c.clause(r)
 
-res = []
-for p in rr:
-    res.append((p[0], [word for word in p[1]])) 
-print pp(res)
+print pp(rr)

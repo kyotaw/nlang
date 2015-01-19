@@ -26,11 +26,11 @@ class JugoCorpusReader(BaseReader):
 		conj_type=w.conj_type('nlang'),
 		base=w.base('nlang')) for w in self.vocabulary]
 
-        def phrased_words(self):
+        def claused_words(self):
 	    words = []
 	    for v in self.vocabulary:
 	        words.append(
-		    (v.phrase(),
+		    (v.clause(),
 		    TaggedWord(
 			lemma=v.lemma('nlang'),
 			pron=v.pron('nlang'),
