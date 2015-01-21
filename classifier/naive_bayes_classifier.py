@@ -42,18 +42,24 @@ class NaiveBayesClassifier(object):
 	def __probability_feature(self, feature, label):
 		prob = 0.0
 		for name, value in feature.items():
+                        feature_name = unicode(name)
 			if isinstance(value, list):
 				for v in value:
-					prob += self.__feature_freq[name].count(v, label) * 1.0 / (self.__feature_count[label][name] + len(self.__feature_vocabulary[name]))
+                                        feature_value = unicode(v)
+					prob += self.__feature_freq[name].count(feature_value, label) * 1.0 / (self.__feature_count[label][feature_name] + len(self.__feature_vocabulary[feature_name]))
 			else:
-				prob += self.__feature_freq[name].count(value, label) * 1.0 / (self.__feature_count[label][name] + len(self.__feature_vocabulary[name]))
+                                feature_value = unicode(value)
+				prob += self.__feature_freq[feature_name].count(feature_value, label) * 1.0 / (self.__feature_count[label][feature_name] + len(self.__feature_vocabulary[feature_name]))
 		return prob
 
 	def __add_feature(self, feature, label):
-		for feature_name, feature_value in feature.items():
+                    for name, value in feature.items():
+                        feature_name = unicode(name)
+                        feature_value = unicode(value)
 			self.__set_dict_default(self.__feature_freq, feature_name, Trie())
 			self.__set_dict_default(self.__feature_vocabulary, feature_name, set())
-			self.__set_dict_default(self.__feature_count, label, {feature_name:0})
+			self.__set_dict_default(self.__feature_count, label, {})
+                        self.__set_dict_default(self.__feature_count[label], feature_name, 0)
 
 			if isinstance(feature_value, list):
 				for value in feature_value:

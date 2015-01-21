@@ -5,6 +5,7 @@ import os
 import pickle
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.base.data.vocabulary import Vocabulary
+from nlang.processor.sentencer import Senetencer
 from nlang.base.util.util import pp
 from nlang.base.system import env
 
@@ -22,9 +23,13 @@ class Tokenizer(object):
 		self.__vocab = Vocabulary(env.vocabfile_path())
 		self.__bos_word = self.__vocab.word(lemma='BOS', pos='BOS')
 		self.__eos_word = self.__vocab.word(lemma='EOS', pos='EOS')
+                self.__sentencer = Senetencer()
 	
 	def tag(self, stream):
-		return self.__parse(stream)
+            words = []
+            for sent in self.__sentencer.sentences(stream):
+                words += self.__parse(sent)
+            return words
 
 	def __parse(self, stream):
 		bos_node = {'word':self.__bos_word, 'total_cost':0, 'prev':None}
