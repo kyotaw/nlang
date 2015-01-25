@@ -5,7 +5,7 @@ import os
 import pickle
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.base.data.vocabulary import Vocabulary
-from nlang.processor.sentencer import Senetencer
+from nlang.processor.sentencer import Sentencer
 from nlang.base.util.util import pp
 from nlang.base.system import env
 
@@ -23,7 +23,7 @@ class Tokenizer(object):
 		self.__vocab = Vocabulary(env.vocabfile_path())
 		self.__bos_word = self.__vocab.word(lemma='BOS', pos='BOS')
 		self.__eos_word = self.__vocab.word(lemma='EOS', pos='EOS')
-                self.__sentencer = Senetencer()
+                self.__sentencer = Sentencer.create()
 	
 	def tag(self, stream):
             words = []
@@ -51,7 +51,7 @@ class Tokenizer(object):
 				min_cost = sys.maxint
 				min_cost_nodes = []
 				for left_node in node_list[i]:
-					if self.__conn_table.is_connectable(left_node['word']['pos'], word['pos']):
+                                    if True:#self.__conn_table.is_connectable(left_node['word']['pos'], word['pos']):
 						total_cost = left_node['total_cost'] + word['cost'] + self.__conn_table.cost(left_node['word']['pos'], word['pos'])
 						
 						if total_cost < min_cost:
@@ -75,8 +75,13 @@ class Tokenizer(object):
 						node_list[index] = []
 					if new_node not in node_list[index]:
 						node_list[index].append(new_node)
-	
+                
 		result = []
+                eos_index = length + 1
+                if eos_index not in node_list:
+                    print('can\'t tagged : ' + stream.encode('utf_8'))
+                    return result
+
 		node = node_list[length+1][0]['prev'] #EOS
 		while node['prev']:
 			result.insert(0, node['word'])

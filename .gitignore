@@ -3,6 +3,7 @@ testdata/
 *.priv.py
 out.*
 out/
+in/
 dev/
 corpus/
 .python-version

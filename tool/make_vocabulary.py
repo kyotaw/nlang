@@ -31,13 +31,14 @@ analyzer = VocabularyAnalyzer()
 for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
-		print('analyzing ' + file)
                 root, ext = os.path.splitext(file)
                 r = None
                 if ext == ".chasen":
 		    r = ChasenCorpusReader(file, '', 'utf-8')
                 elif ext == ".jugo":
                     r = JugoCorpusReader(file, '', 'utf-8')
+		print('analyzing ' + file)
+                
                 if r:
                     words = r.tagged_words()
 		    for word in words:

@@ -38,6 +38,10 @@ def ready_made_chunker():
     option = __get_option('READYMADE_CHUNKER')
     return option if option != '' else NLANG_ROOT + 'data/instance/chunker.pickle'
 
+def ready_made_sentencer():
+    option = __get_option('READYMADE_SENTENCER')
+    return option if option != '' else NLANG_ROOT + 'data/instance/sentencer.pickle'
+
 def __get_option(item):
 	return options[item] if item in options else ''
 

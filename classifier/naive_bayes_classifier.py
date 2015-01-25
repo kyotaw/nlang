@@ -55,13 +55,13 @@ class NaiveBayesClassifier(object):
 	def __add_feature(self, feature, label):
                     for name, value in feature.items():
                         feature_name = unicode(name)
-                        feature_value = unicode(value)
+                        feature_value = value
 			self.__set_dict_default(self.__feature_freq, feature_name, Trie())
 			self.__set_dict_default(self.__feature_vocabulary, feature_name, set())
 			self.__set_dict_default(self.__feature_count, label, {})
                         self.__set_dict_default(self.__feature_count[label], feature_name, 0)
 
-			if isinstance(feature_value, list):
+                        if isinstance(feature_value, list): 
 				for value in feature_value:
 					self.__feature_freq[feature_name].insert(value, label)
 					self.__feature_vocabulary[feature_name].add(value)
