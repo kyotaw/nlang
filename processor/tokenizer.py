@@ -8,22 +8,26 @@ from nlang.base.data.vocabulary import Vocabulary
 from nlang.processor.sentencer import Sentencer
 from nlang.base.util.util import pp
 from nlang.base.system import env
+from nlang.base.util.singleton import Singleton
 
-class Tokenizer(object):
-        @classmethod
-        def create(cls):
-            pickls = env.ready_made_tokenizer()
-            if os.path.exists(pickls):
-                with open(pickls, 'rb') as f:
-                    return pickle.load(f)
-            return cls()
-	
-        def __init__(self):
+def Tokenizer():
+    def create_new_instance(cls):
+        pickls = env.ready_made_tokenizer()
+        if os.path.exists(pickls):
+            with open(pickls, 'rb') as f:
+                return pickle.load(f)
+        return super(Singleton, cls).__new__(cls)
+    return TokenizerImpl(create_new_instance)
+
+class TokenizerImpl(Singleton):
+        def __init__(self, new_instance_func):
+            if not self._Singleton__initialized:
 		self.__conn_table = ConnectivityTable(env.connfile_path())
 		self.__vocab = Vocabulary(env.vocabfile_path())
 		self.__bos_word = self.__vocab.word(lemma='BOS', pos='BOS')
 		self.__eos_word = self.__vocab.word(lemma='EOS', pos='EOS')
-                self.__sentencer = Sentencer.create()
+                self.__sentencer = Sentencer()
+                self._Singleton__initialized = True
 	
 	def tag(self, stream):
             words = []

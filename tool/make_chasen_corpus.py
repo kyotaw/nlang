@@ -42,3 +42,6 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 		with open(file, 'r') as f:
 			tagged_words = separator.tag((f.read().decode('utf-8')))
 			ChasenCorpusWriter(out_file, tagged_words)
+
+time = datetime.datetime.now() - start
+print('completed! time : ' + str(time.seconds) + ' sec')

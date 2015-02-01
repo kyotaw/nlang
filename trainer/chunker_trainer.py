@@ -22,6 +22,8 @@ chunker = Chunker()
 for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
+            if os.path.isdir(file):
+                continue
             reader = JugoCorpusReader(file)
             jugo_words = reader.claused_words()
             tagged_words = [w[1] for w in jugo_words]
@@ -31,7 +33,7 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
                     break
 
 with open('out.clause.trained', 'wb') as f:
-	for clause in chunker._Chunker__clauses.dump():
+	for clause in chunker._ChunkerImpl__clauses.dump():
 		line = u''
 		line += clause[1][0] + '\t'
 		line += clause[1][1] + '\t'
@@ -39,7 +41,7 @@ with open('out.clause.trained', 'wb') as f:
 		f.write(line.encode('utf-8'))
 
 with open('out.iob_conn.trained', 'wb') as f:
-	for left_pos, right_pos_list in chunker._Chunker__iob_conn._ConnectivityTable__table.items():
+	for left_pos, right_pos_list in chunker._ChunkerImpl__iob_conn._ConnectivityTable__table.items():
 		line = u''
 		line += left_pos 
                 for right_pos, cost in right_pos_list.items():

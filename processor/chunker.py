@@ -6,30 +6,34 @@ import pickle
 from nlang.base.data.clause import Clause
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.base.system import env
+from nlang.base.util.singleton import Singleton
 
-class Chunker(object):
+def Chunker():
+    def create_new_instance(cls):
+        pickls = env.ready_made_chunker()
+        if os.path.exists(pickls):
+            with open(pickls, 'rb') as f:
+                return pickle.load(f)
+        return super(Singleton, cls).__new__(cls)
+    return ChunkerImpl(create_new_instance)
+
+class ChunkerImpl(Singleton):
         __penalty = 1
 	__eta = 1
-
-        @classmethod
-        def create(cls):
-            pickls = env.ready_made_chunker()
-            if os.path.exists(pickls):
-                with open(pickls, 'rb') as f:
-                    return pickle.load(f)
-            return cls()
 	
-        def __init__(self):
-            clause_file = env.trained_clausefile_path()
-            if not os.path.exists(clause_file):
-                clause_file = env.clausefile_path()
-	    self.__clauses = Clause(clause_file)
-            conn_file = env.trained_clause_iob_connfile_path()
-            if not os.path.exists(conn_file):
-                conn_file = env.clause_iob_connfile_path()
-            self.__iob_conn = ConnectivityTable(conn_file)
-	    self.__bos_clause = self.__clauses.clause(pos='BOS', clause='O')
-	    self.__eos_clause = self.__clauses.clause(pos='EOS', clause='O')
+        def __init__(self, new_instance_func):
+            if not self._Singleton__initialized:
+                clause_file = env.trained_clausefile_path()
+                if not os.path.exists(clause_file):
+                    clause_file = env.clausefile_path()
+	        self.__clauses = Clause(clause_file)
+                conn_file = env.trained_clause_iob_connfile_path()
+                if not os.path.exists(conn_file):
+                    conn_file = env.clause_iob_connfile_path()
+                self.__iob_conn = ConnectivityTable(conn_file)
+	        self.__bos_clause = self.__clauses.clause(pos='BOS', clause='O')
+	        self.__eos_clause = self.__clauses.clause(pos='EOS', clause='O')
+                self._Singleton__initialized = True
 
 	def clause(self, tagged_words):
 		return self.__interpret(self.__clause(tagged_words, self.__get_clause_cost_func(), self.__get_conn_cost_func()), 'lemma')
