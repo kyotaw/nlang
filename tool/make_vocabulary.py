@@ -47,8 +47,10 @@ for dir_path, sub_dirs, file_names in os.walk(baseDir):
 		    analyzer.analyze(words)
 
 with open(out_file, 'wb') as f:
-	for key_val in vocab.dump():
+    for key_val in vocab.dump():
 		tagged_word = key_val[1]
+                if tagged_word['pos'] == 'UNK':
+                    continue
 		line = u''
 		line += tagged_word['lemma'] + u'\t'
 		line += tagged_word['pron'] + u'\t'

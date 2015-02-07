@@ -8,14 +8,14 @@ from nlang.corpus.delim.delim_reader import DelimCorpusReader
 from nlang.classifier.naive_bayes_classifier import NaiveBayesClassifier
 from nlang.base.util.singleton import Singleton
 
-def Sentencer():
+def Sentencer(plain=False):
     def create_new_instance(cls):
         pickls = env.ready_made_sentencer()
         if os.path.exists(pickls):
             with open(pickls, 'rb') as f:
                 return pickle.load(f)
         return super(Singleton, cls).__new__(cls)
-    return SentencerImpl(create_new_instance)
+    return SentencerImpl(None if plain else create_new_instance)
 
 class SentencerImpl(Singleton):
     @staticmethod
@@ -28,7 +28,6 @@ class SentencerImpl(Singleton):
             self._Singleton__initialized = True
 
     def sentences(self, text):
-        sents = []
         sent = u''
         prev_char = u''
         for i in range(len(text)):
@@ -36,15 +35,15 @@ class SentencerImpl(Singleton):
             next_char = text[i+1] if i+1 < len(text) else u''
             if c == '\n':
                 continue
-            if self.__classifier.classify(SentencerImpl.get_feature(c, prev_char, next_char)):
-                sents.append(sent + c)
+            if self.__classifier.classify(SentencerImpl.get_feature(c, prev_char, next_char)) == u'True':
+                yield sent + c
                 sent = u''
             else:
                 sent += c
             prev_char = c
         if len(sent) > 0:
-            sents.append(sent)
-        return sents
+            yield sent
+        raise StopIteration
 
     def train(self, data):
         self.__classifier.train(data)

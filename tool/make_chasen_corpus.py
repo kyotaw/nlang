@@ -36,12 +36,15 @@ file_count = 0
 for dir_path, sub_dirs, file_names in os.walk(baseDir):
 	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
 	for file in file_list:
-		print('analyzing ' + file)
-		file_count += 1
-		out_file = out_dir + '/' + prefix + str(file_count).zfill(4) + '.chasen'	
-		with open(file, 'r') as f:
-			tagged_words = separator.tag((f.read().decode('utf-8')))
-			ChasenCorpusWriter(out_file, tagged_words)
+            if os.path.isdir(file):
+                continue
+
+	    print('analyzing ' + file)
+	    file_count += 1
+	    out_file = out_dir + '/' + prefix + str(file_count).zfill(4) + '.chasen'	
+	    with open(file, 'r') as f:
+		tagged_words = separator.tag((f.read().decode('utf-8')))
+		ChasenCorpusWriter(out_file, tagged_words)
 
 time = datetime.datetime.now() - start
 print('completed! time : ' + str(time.seconds) + ' sec')

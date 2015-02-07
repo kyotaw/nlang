@@ -16,7 +16,7 @@ count = 100
 if len(sys.argv) > 3:
     count = sys.argv[3]
 
-tokenizer = Tokenizer()
+tokenizer = Tokenizer(True)
 with open('tokenizer.pickle', 'wb') as f:
     pickle.dump(tokenizer, f)
 

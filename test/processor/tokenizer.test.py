@@ -8,5 +8,5 @@ r = s.tag(u'新潟県妙高市西野谷の粟立山（１１９４メートル�
 
 rr = []
 for l in r:
-	rr.append((l['lemma'], l['pos']))
-print pp(rr)
+    rr.append((l['lemma'], l['pos']))
+print( pp(rr))

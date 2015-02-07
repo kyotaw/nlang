@@ -17,7 +17,7 @@ if len(sys.argv) < 3:
 baseDir = sys.argv[1]
 pattern = sys.argv[2]
 
-sentencer = Sentencer()
+sentencer = Sentencer(True)
 for dir_path, sub_dirs, file_names in os.walk(baseDir):
     file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
     for file in file_list:
