@@ -4,7 +4,34 @@ from nlang.base.data.trie import Trie
 from nlang.base.data.tagged_word import TaggedWord
 from nlang.base.util.util import *
 
-class Vocabulary(object):
+class Word(object):
+    def __init__(self, raw_word):
+        self.__raw = raw_word
+
+    def get_value(self):
+        return self.__raw
+
+    def get_hook(self):
+        return self.__raw['pos']
+    
+    def get_length(self):
+        return self.__raw['length']
+
+    def is_bos(self):
+        return True if self.__raw['pos'] == 'BOS' else False
+
+    def is_eos(self):
+        return True if self.__raw['pos'] == 'EOS' else False
+       
+    def _get_cost(self):
+        return self.__raw['cost']
+
+    def _set_cost(self, value):
+        self.__raw['cost'] = value
+
+    cost = property(_get_cost, _set_cost)
+
+class WordVocabulary(object):
     def __init__(self, file_path):
         self.__words = Trie()
                 
@@ -40,19 +67,27 @@ class Vocabulary(object):
                 )
                 self.__words.insert(word['lemma'], word)
                 line = f.readline()
+                        
+    def extract_vocabulary(self, stream):
+        words = self.__words.common_prefix_search(stream)
+        if len(words) == 0 :
+            words = self.__assume_unknown_word(stream)
+        return [Word(w) for w in words]
 
-    def word(self, lemma, pos):
-        not_found = TaggedWord()
+    def get_bos(self):
+        return self.__get_word('BOS', 'BOS') 
+    
+    def get_eos(self):
+        return self.__get_word('EOS', 'EOS') 
+    
+    def __get_word(self, lemma, pos):
+        not_found = Word(TaggedWord())
         cands = self.__words.common_prefix_search(lemma)
         for w in cands:
             if w['lemma'] == lemma and w['pos'] == pos:
-                return w        
+                return Word(w)
         return not_found
-                        
-    def extract_words(self, stream):
-        words = self.__words.common_prefix_search(stream)
-        return words if len(words) > 0 else self.__assume_unknown_word(stream)
-        
+    
     def __assume_unknown_word(self, stream):
         length = len(stream)
         if length == 0:
