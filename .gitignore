@@ -1,6 +1,6 @@
 testdata/
 *.pyc
-*.priv.py
+*_b.py
 .DS_Store
 out.*
 out/
@@ -9,3 +9,4 @@ dev/
 corpus/
 .python-version
 tokenizer.pickle
+__pycache__

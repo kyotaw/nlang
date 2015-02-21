@@ -1,55 +1,49 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import glob
+import os
+import datetime
+import argparse
+
 from nlang.corpus.chasen.chasen_reader import ChasenCorpusReader
 from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
 from nlang.analyzer.connectivity_analyzer import ConnectivityAnalyzer
 from nlang.base.data.cost_calculator import calculate_cost
-import re, pprint
-import sys
-import glob
-import codecs
-import os
-import datetime
-import threading
 
-if len(sys.argv) < 3:
-	print('usage make_connectability_table.py baseDir fileNamePattern outFileName')
-	quit()
 
-baseDir = sys.argv[1]
-pattern = sys.argv[2]
-out_file = 'out'
-if len(sys.argv) > 3:
-	out_file = sys.argv[3]
-out_file += '.conn'
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--src_root_path', nargs=None, type=str, action='store')
+    parser.add_argument('-f', '--file_pattern', nargs=None, type=str, action='store')
+    parser.add_argument('-o', '--out_filename', nargs='?', default='out', type=str, action='store')
+    args = parser.parse_args()
 
-start = datetime.datetime.now()
+    start = datetime.datetime.now()
 
-analyzer = ConnectivityAnalyzer()
-for dir_path, sub_dirs, file_names in os.walk(baseDir):
-	file_list = glob.glob(os.path.expanduser(dir_path) + '/' + pattern)
-	for file in file_list:
-                root, ext = os.path.splitext(file)
-                r = None
-                if ext == ".chasen":
-		    r = ChasenCorpusReader(file, '', 'utf-8')
-                elif ext == ".jugo":
-                    r = JugoCorpusReader(file, '', 'utf-8')
-		print('analyzing ' + file)
-                
-                if r:
-                    analyzer.analyze(r.tagged_words())
+    analyzer = ConnectivityAnalyzer()
+    for dir_path, sub_dirs, file_names in os.walk(args.src_root_path):
+        file_list = glob.glob(os.path.expanduser(dir_path) + '/' + args.file_pattern)
+        for file in file_list:
+            root, ext = os.path.splitext(file)
+            r = None
+            if ext == ".chasen":
+                r = ChasenCorpusReader(file)
+            elif ext == ".jugo":
+                r = JugoCorpusReader(file)
+            if r:
+                print('analyzing ' + file)
+                analyzer.analyze(r.tagged_words())
 
-print('writing connectivity table...')
+    print('writing connectivity table...')
 
-with open(out_file, 'wb') as f:
-	for pos, connects in analyzer.connect_table.items():
-		row = pos
-		for i, val in enumerate(connects):
-			row += '\t' + val + ':' + str(calculate_cost(analyzer.probability(pos, val)))
-		row += '\n'
-		f.write(row.encode('utf-8'))
+    with open('.'.join([args.out_filename, 'conn']), 'w') as f:
+        for tag, connects in analyzer.connect_table.items():
+            line = tag
+            for i, val in enumerate(connects):
+                line += '\t' + val + ':' + str(calculate_cost(analyzer.probability(tag, val)))
+            line += '\n'
+            f.write(line)
 
-time = datetime.datetime.now() - start
-print('completed! time : ' + str(time.seconds) + ' sec')
-
+    time = datetime.datetime.now() - start
+    print('completed! time : ' + str(time.seconds) + ' sec')

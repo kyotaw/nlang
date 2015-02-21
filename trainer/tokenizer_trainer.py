@@ -7,8 +7,8 @@ import glob
 from nlang.processor.tokenizer import Tokenizer
 
 if len(sys.argv) < 3:
-	print('usage chunker_trainer.py baseDir fileNamePattern train_count')
-	quit()
+    print('usage chunker_trainer.py baseDir fileNamePattern train_count')
+    quit()
 
 baseDir = sys.argv[1]
 pattern = sys.argv[2]
@@ -19,5 +19,3 @@ if len(sys.argv) > 3:
 tokenizer = Tokenizer(True)
 with open('tokenizer.pickle', 'wb') as f:
     pickle.dump(tokenizer, f)
-
-

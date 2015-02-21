@@ -2,11 +2,11 @@
 
 import os
 import pickle
-from nlang.base.util import unicode
+
 from nlang.base.system import env
-from nlang.corpus.delim.delim_reader import DelimCorpusReader
 from nlang.classifier.naive_bayes_classifier import NaiveBayesClassifier
 from nlang.base.util.singleton import Singleton
+
 
 def Sentencer(plain=False):
     def create_new_instance(cls):
@@ -17,27 +17,28 @@ def Sentencer(plain=False):
         return super(Singleton, cls).__new__(cls)
     return SentencerImpl(None if plain else create_new_instance)
 
+
 class SentencerImpl(Singleton):
     @staticmethod
     def get_feature(c, prev_char, next_char):
-        return {'punct':c, 'prev_char':prev_char, 'next_char':next_char}
+        return {'punct': c, 'prev_char': prev_char, 'next_char': next_char}
 
     def __init__(self, new_instance_func):
-        if not self._Singleton__initialized:
-            self.__classifier = NaiveBayesClassifier()
-            self._Singleton__initialized = True
+        if not self._initialized:
+            self._classifier = NaiveBayesClassifier()
+            self._initialized = True
 
     def sentences(self, text):
-        sent = u''
-        prev_char = u''
+        sent = ''
+        prev_char = ''
         for i in range(len(text)):
             c = text[i]
-            next_char = text[i+1] if i+1 < len(text) else u''
+            next_char = text[i + 1] if i + 1 < len(text) else ''
             if c == '\n':
                 continue
-            if self.__classifier.classify(SentencerImpl.get_feature(c, prev_char, next_char)) == u'True':
+            if self._classifier.classify(SentencerImpl.get_feature(c, prev_char, next_char)) == 'True':
                 yield sent + c
-                sent = u''
+                sent = ''
             else:
                 sent += c
             prev_char = c
@@ -46,4 +47,4 @@ class SentencerImpl(Singleton):
         raise StopIteration
 
     def train(self, data):
-        self.__classifier.train(data)
+        self._classifier.train(data)
