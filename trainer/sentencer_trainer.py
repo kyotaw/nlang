@@ -7,6 +7,8 @@ import glob
 import argparse
 import codecs
 
+import bz2
+
 from nlang.base.system import env
 from nlang.base.util.util import pp
 from nlang.processor.sentencer import Sentencer, SentencerImpl
@@ -50,5 +52,7 @@ if __name__ == '__main__':
             sentencer.train((cur_delim, SentencerImpl.get_feature(cur_char, prev_char, next_char)))
             f.close()
 
-    with open('sentencer.pickle', 'wb') as f:
-        pickle.dump(sentencer, f)
+    with open('sentencer.pickle.bz2', 'wb') as f:
+        pic = pickle.dumps(sentencer)
+        pac = bz2.compress(pic)
+        f.write(pac)

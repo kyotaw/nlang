@@ -4,6 +4,8 @@ import sys
 import os
 import pickle
 
+import bz2
+
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.base.data.vocabulary import WordVocabulary
 from nlang.processor.sentencer import Sentencer
@@ -18,7 +20,7 @@ def Tokenizer(plain=False):
         pickls = env.ready_made_tokenizer()
         if os.path.exists(pickls):
             with open(pickls, 'rb') as f:
-                return pickle.load(f)
+                return pickle.loads(bz2.decompress(f.read()))
         return super(Singleton, cls).__new__(cls)
     return TokenizerImpl(new_instance_func=None if plain else create_new_instance)
 

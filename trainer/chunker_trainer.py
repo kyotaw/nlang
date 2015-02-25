@@ -6,6 +6,8 @@ import os
 import glob
 import argparse
 
+import bz2
+
 from nlang.base.system import env
 from nlang.processor.chunker import Chunker
 from nlang.corpus.jugo.jugo_reader import JugoCorpusReader
@@ -49,5 +51,7 @@ if __name__ == '__main__':
             line += '\n'
             f.write(line)
 
-    with open('chunker.pickle', 'wb') as f:
-        pickle.dump(chunker, f)
+    with open('chunker.pickle.bz2', 'wb') as f:
+        pic = pickle.dumps(chunker)
+        pac = bz2.compress(pic)
+        f.write(pac)

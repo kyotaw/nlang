@@ -3,6 +3,8 @@
 import os
 import pickle
 
+import bz2
+
 from nlang.base.system import env
 from nlang.classifier.naive_bayes_classifier import NaiveBayesClassifier
 from nlang.base.util.singleton import Singleton
@@ -13,7 +15,7 @@ def Sentencer(plain=False):
         pickls = env.ready_made_sentencer()
         if os.path.exists(pickls):
             with open(pickls, 'rb') as f:
-                return pickle.load(f)
+                return pickle.loads(bz2.decompress(f.read()))
         return super(Singleton, cls).__new__(cls)
     return SentencerImpl(None if plain else create_new_instance)
 

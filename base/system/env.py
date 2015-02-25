@@ -39,17 +39,17 @@ def trained_clausefile_path():
 
 def ready_made_tokenizer():
     option = __get_option('READYMADE_TOKENIZER')
-    return option if option != '' else NLANG_ROOT + 'data/instance/tokenizer.pickle'
+    return option if option != '' else NLANG_ROOT + 'data/instance/tokenizer.pickle.bz2'
 
 
 def ready_made_chunker():
     option = __get_option('READYMADE_CHUNKER')
-    return option if option != '' else NLANG_ROOT + 'data/instance/chunker.pickle'
+    return option if option != '' else NLANG_ROOT + 'data/instance/chunker.pickle.bz2'
 
 
 def ready_made_sentencer():
     option = __get_option('READYMADE_SENTENCER')
-    return option if option != '' else NLANG_ROOT + 'data/instance/sentencer.pickle'
+    return option if option != '' else NLANG_ROOT + 'data/instance/sentencer.pickle.bz2'
 
 
 def __get_option(item):

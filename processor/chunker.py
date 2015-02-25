@@ -4,6 +4,8 @@ import sys
 import os
 import pickle
 
+import bz2
+
 from nlang.base.data.clause import ClauseVocabulary
 from nlang.base.data.conn_table import ConnectivityTable
 from nlang.analyzer.cost_minimization_method import CostMinimizationMethod
@@ -16,7 +18,7 @@ def Chunker(plain=False):
         pickls = env.ready_made_chunker()
         if os.path.exists(pickls):
             with open(pickls, 'rb') as f:
-                return pickle.load(f)
+                return pickle.loads(bz2.decompress(f.read()))
         return super(Singleton, cls).__new__(cls)
     return ChunkerImpl(None if plain else create_new_instance)
 

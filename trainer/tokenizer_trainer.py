@@ -4,18 +4,22 @@ import sys
 import pickle
 import os
 import glob
+import argparse
+
+import bz2
+
 from nlang.processor.tokenizer import Tokenizer
 
-if len(sys.argv) < 3:
-    print('usage chunker_trainer.py baseDir fileNamePattern train_count')
-    quit()
 
-baseDir = sys.argv[1]
-pattern = sys.argv[2]
-count = 100
-if len(sys.argv) > 3:
-    count = sys.argv[3]
-
-tokenizer = Tokenizer(True)
-with open('tokenizer.pickle', 'wb') as f:
-    pickle.dump(tokenizer, f)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--src_root_path', nargs=None, type=str, action='store')
+    parser.add_argument('-f', '--file_pattern', nargs=None, type=str, action='store')
+    parser.add_argument('-c', '--train_count', nargs='?', default='20', type=int, action='store')
+    args = parser.parse_args()
+    
+    tokenizer = Tokenizer(True)
+    with open('tokenizer.pickle.bz2', 'wb') as f:
+        pic = pickle.dumps(tokenizer)
+        pac = bz2.compress(pic)
+        f.write(pac)

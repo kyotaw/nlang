@@ -11,7 +11,7 @@ ff = []
 for f in r:
     ff.append((f.lemma, f.tag))
 print(pp(ff))
-c = Chunker(plain=True)
+c = Chunker()
 rr = c.clause(r)
 for clause in rr:
     lem = [w.lemma for w in clause]
