@@ -90,8 +90,8 @@ class NaiveBayesClassifier(object):
                 self._feature_count[label][feature_name] += 1
 
     def _add_label(self, label):
-        self._set_dict_default(self._label_count, label, 0)
-        self._label_count[label] += 1
+        self._set_dict_default(self._label_count, label, 1)
+        #self._label_count[label] += 1
 
     def _set_dict_default(self, dic, key, default_value):
         if key not in dic:

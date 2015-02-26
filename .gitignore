@@ -1,6 +1,7 @@
 testdata/
 *.pyc
 *_b.py
+*.test.py
 .DS_Store
 out.*
 out/
