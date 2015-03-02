@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from nlang.base.data.trie import Trie
+#from nlang.base.data.trie import Trie
+from nlang.base.data.trie import ArrayTrie
 from nlang.base.data.vocab_word import VocabWord
 from nlang.base.data.tagged_word import TaggedWord
 from nlang.base.util.util import *
