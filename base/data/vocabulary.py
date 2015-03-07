@@ -67,7 +67,7 @@ class WordVocabulary(object):
 
     def _get_word(self, lemma, pos):
         not_found = Word(TaggedWord())
-        cands = self._words.common_prefix_search(lemma)
+        cands = self._words.get(lemma)
         for w in cands:
             if w.lemma == lemma and w.tag == pos:
                 return Word(w)

@@ -43,3 +43,22 @@ class ChasenWord(object):
         else:
             self.conj_type = ''
             self.conj_form = ''
+    
+    def __eq__(self, other):
+        return ((self.lemma, self.pron, self.base, self.pos, self.conj_type, self.conj_form) ==
+                (other.lemma, other.pron, other.base, other.pos, other.conj_type, other.conj_form))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        return self.lemma < other.lemma
+
+    def __le__(self, other):
+        return self.lemma <= other.lemma
+
+    def __gt__(self, other):
+        return self.lemma > other.lemma
+
+    def __ge__(self, other):
+        return self.lemma >= other.lemma

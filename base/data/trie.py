@@ -3,84 +3,79 @@
 
 class Trie(object):
     def __init__(self):
-        self.root = {}
+        self._root = {}
 
     def insert(self, key, value):
-        self._insert(self.root, key, value)
-
-    def common_prefix_search(self, key):
-        return self._common_prefix_search(self.root, key)
-
-    def get(self, key):
-        return self._get(self.root, key)
-
-    def count(self, key, value):
-        return self._count(self.root, key, value)
-
-    def dump(self):
-        data = []
-        self._dump(self.root, [], data)
-        return data
-
-    def _insert(self, node, key, value):
-        if key:
-            key_head = key[0]
+        node = self._root
+        for key_head in key:
             if key_head not in node:
                 node[key_head] = {}
-            self._insert(node[key_head], key[1:], value)
-        else:
-            if 'value' not in node:
-                node['value'] = []
-            for pkg in node['value']:
-                if value == pkg['data']:
-                    pkg['count'] += 1
-                    return
-            node['value'].append({'data': value, 'count': 1})
-
-    def _common_prefix_search(self, node, key):
+            node = node[key_head]
+        
+        if 'value' not in node:
+            node['value'] = []
+        for pkg in node['value']:
+            if value == pkg['data']:
+                pkg['count'] += 1
+                return
+        node['value'].append({'data': value, 'count': 1})
+    
+    def common_prefix_search(self, key):
         data = []
+        node = self._root
+        for key_head in key:
+            if 'value' in node:
+                for pkg in node['value']:
+                    data.append(pkg['data'])
+            if key_head not in node:
+                break
+            node = node[key_head]
         if 'value' in node:
             for pkg in node['value']:
                 data.append(pkg['data'])
-        if key:
-            key_head = key[0]
-            if key_head in node:
-                data += self._common_prefix_search(node[key_head], key[1:])
         return data
-
-    def _get(self, node, key):
-        if key:
-            key_head = key[0]
-            if key_head not in node:
-                return []
-            return self._get(node[key_head], key[1:])
-        else:
-            if 'value' not in node:
-                return []
-            return [pkg['data'] for pkg in node['value']]
-
-    def _count(self, node, key, value):
-        if key:
-            key_head = key[0]
-            if key_head not in node:
-                return 0
-            return self._count(node[key_head], key[1:], value)
-        else:
-            if 'value' not in node:
-                return 0
-            for pkg in node['value']:
-                if value == pkg['data']:
-                    return pkg['count']
+    
+    def get(self, key):
+        value_list = self._search(key)
+        if value_list is None:
+            return None
+        return [pkg['data'] for pkg in value_list]
+    
+    def count(self, key, value):
+        value_list = self._search(key)
+        if value_list is None:
             return 0
+        
+        for pkg in value_list:
+            if value == pkg['data']:
+                return pkg['count']
+        return 0
+        
+    def dump(self):
+        return self._dump(self._root, [])
+    
+    def _search(self, key):
+        node = self._root
+        for key_head in key:
+            if key_head not in node:
+                return None
+            node = node[key_head]
+            
+        if 'value' not in node:
+            return None
+        return node['value']
 
-    def _dump(self, dict, key, data):
-        if 'value' in dict:
+    def _dump(self, node, key):
+        data = []
+        if 'value' in node:
             k = key[:]
-            for pkg in dict['value']:
+            for pkg in node['value']:
                 data.append((k, pkg['data']))
 
-        for k, v in dict.items():
-            if k != 'value':
+        for label, child_node in node.items():
+            if label != 'value':
                 child_key = key[:]
-                child_key.append(k)
-                self._dump(v, child_key, data)
+                child_key.append(label)
+                data += self._dump(child_node, child_key)
+        
+        return data
