@@ -12,6 +12,11 @@ def connfile_path():
     return option if option != '' else NLANG_ROOT + 'data/conn/master/master.conn'
 
 
+def vocabfolder_path():
+    option = __get_option('VOCABFOLDER_PATH')
+    return option if option != '' else NLANG_ROOT + 'data/vocab/master/'
+
+
 def vocabfile_path():
     option = __get_option('VOCABFILE_PATH')
     return option if option != '' else NLANG_ROOT + 'data/vocab/master/master.vocab'

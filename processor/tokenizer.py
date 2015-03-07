@@ -7,7 +7,7 @@ import pickle
 import bz2
 
 from nlang.base.data.conn_table import ConnectivityTable
-from nlang.base.data.vocabulary import WordVocabulary
+from nlang.base.data.vocabulary import WordVocabulary, UnicodeRangeWordVocabulary
 from nlang.processor.sentencer import Sentencer
 from nlang.analyzer.cost_minimization_method import CostMinimizationMethod
 from nlang.base.util.util import pp
@@ -30,6 +30,7 @@ class TokenizerImpl(Singleton):
         if not self._initialized:
             self._conn_table = ConnectivityTable(env.connfile_path())
             self._vocab = WordVocabulary(env.vocabfile_path())
+            # self._vocab = UnicodeRangeWordVocabulary()
             self._sentencer = Sentencer()
             self._analyzer = CostMinimizationMethod(self._vocab, self._conn_table)
 

@@ -18,7 +18,7 @@ def get_range(c):
     cp = code_point(c)
     for r in unicode_range:
         if r[0] <= cp and cp <= r[1]:
-            return r 
+            return r
     raise Exception(c + 'is unicode out of range')
 
 if __name__ == '__main__':
@@ -51,11 +51,11 @@ if __name__ == '__main__':
 
     if not os.path.exists(args.out_foldername):
         os.mkdir(args.out_foldername)
-   
+
     files = {}
     for uni_range in unicode_range:
         files[uni_range] = open(args.out_foldername + '/' + '_'.join(map(lambda x: hex(x), uni_range)), 'w')
-    
+
     for key_val in vocab.dump():
         word = key_val[1]
         if word.pos[0] == 'UNK':
@@ -67,10 +67,10 @@ if __name__ == '__main__':
             line = '\t'.join([line, word.conj_form])
         line = '\t'.join([line, str(calculate_cost(analyzer.probability(word.lemma, word.tag)))])
         line += '\n'
-        
+
         uni_range = get_range(word.lemma[0])
         files[uni_range].write(line)
-    
+
     for f in files.values():
         f.close()
 

@@ -22,53 +22,53 @@ class Trie(object):
         self._dump(self.root, [], data)
         return data
 
-    def _insert(self, dict, key, value):
+    def _insert(self, node, key, value):
         if key:
             key_head = key[0]
-            if key_head not in dict:
-                dict[key_head] = {}
-            self._insert(dict[key_head], key[1:], value)
+            if key_head not in node:
+                node[key_head] = {}
+            self._insert(node[key_head], key[1:], value)
         else:
-            if 'value' not in dict:
-                dict['value'] = []
-            for pkg in dict['value']:
+            if 'value' not in node:
+                node['value'] = []
+            for pkg in node['value']:
                 if value == pkg['data']:
                     pkg['count'] += 1
                     return
-            dict['value'].append({'data': value, 'count': 1})
+            node['value'].append({'data': value, 'count': 1})
 
-    def _common_prefix_search(self, dict, key):
+    def _common_prefix_search(self, node, key):
         data = []
-        if 'value' in dict:
-            for pkg in dict['value']:
+        if 'value' in node:
+            for pkg in node['value']:
                 data.append(pkg['data'])
         if key:
             key_head = key[0]
-            if key_head in dict:
-                data += self._common_prefix_search(dict[key_head], key[1:])
+            if key_head in node:
+                data += self._common_prefix_search(node[key_head], key[1:])
         return data
 
-    def _get(self, dict, key):
+    def _get(self, node, key):
         if key:
             key_head = key[0]
-            if key_head not in dict:
+            if key_head not in node:
                 return []
-            return self._get(dict[key_head], key[1:])
+            return self._get(node[key_head], key[1:])
         else:
-            if 'value' not in dict:
+            if 'value' not in node:
                 return []
-            return [pkg['data'] for pkg in dict['value']]
+            return [pkg['data'] for pkg in node['value']]
 
-    def _count(self, dict, key, value):
+    def _count(self, node, key, value):
         if key:
             key_head = key[0]
-            if key_head not in dict:
+            if key_head not in node:
                 return 0
-            return self._count(dict[key_head], key[1:], value)
+            return self._count(node[key_head], key[1:], value)
         else:
-            if 'value' not in dict:
+            if 'value' not in node:
                 return 0
-            for pkg in dict['value']:
+            for pkg in node['value']:
                 if value == pkg['data']:
                     return pkg['count']
             return 0

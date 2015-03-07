@@ -17,7 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--file_pattern', nargs=None, type=str, action='store')
     parser.add_argument('-c', '--train_count', nargs='?', default='20', type=int, action='store')
     args = parser.parse_args()
-    
+
     tokenizer = Tokenizer(True)
     with open('tokenizer.pickle.bz2', 'wb') as f:
         pic = pickle.dumps(tokenizer)

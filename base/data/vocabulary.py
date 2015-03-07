@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
-#from nlang.base.data.trie import Trie
+import threading
+
 from nlang.base.data.trie import Trie
+from nlang.base.data.double_array_trie import DoubleArrayTrie
 from nlang.base.data.vocab_word import VocabWord
 from nlang.base.data.tagged_word import TaggedWord
-from nlang.base.util.util import *
+from nlang.base.util.util import get_char_type
+from nlang.base.util.unicode_util import unicode_range, code_point
+from nlang.base.system import env
 
 
 class Word(object):
@@ -84,3 +88,62 @@ class WordVocabulary(object):
 
         unk_word = stream[:last_index + 1]
         return [TaggedWord({'lemma': unk_word, 'pron': 'UNK', 'base': 'UNK', 'pos': ['UNK'], 'cost': 10, 'length': len(unk_word)})]
+
+
+class UnicodeRangeWordVocabulary(object):
+    @staticmethod
+    def _init_vocaburaly(self, file_path, uni_range, lock):
+        wv = WordVocabulary(file_path)
+        lock.acquire()
+        self._ranged_vocabulary_map[uni_range] = wv
+        lock.release()
+
+    def __init__(self):
+        self._ranged_vocabulary_map = {}
+        self._bos = TaggedWord({'lemma': 'BOS', 'pron': 'BOS', 'pos': ['BOS'], 'cost': 0, 'length': 1})
+        self._eos = TaggedWord({'lemma': 'EOS', 'pron': 'EOS', 'pos': ['EOS'], 'cost': 0, 'length': 1})
+
+        init_threads = []
+        lock = threading.Lock()
+
+        vocab_folder = env.vocabfolder_path()
+        for uni_range in unicode_range:
+            file_name = '_'.join(map(lambda v: hex(v), uni_range))
+            file_path = vocab_folder + file_name
+            with open(file_path) as f:
+                if not f.readline():
+                    continue
+            thread = threading.Thread(target=UnicodeRangeWordVocabulary._init_vocaburaly, args=(self, file_path, uni_range, lock))
+            thread.start()
+            init_threads.append(thread)
+
+        for thread in init_threads:
+            thread.join()
+
+    def extract_vocabulary(self, stream):
+        if not stream:
+            return []
+
+        wv = self._get_word_vocabulary(stream)
+        if wv is None:
+            return []
+        return wv.extract_vocabulary(stream)
+
+    def get_bos(self):
+        wv = self._get_word_vocabulary('BOS')
+        if wv is None:
+            return []
+        return wv.get_bos()
+
+    def get_eos(self):
+        wv = self._get_word_vocabulary('EOS')
+        if wv is None:
+            return []
+        return wv.get_eos()
+
+    def _get_word_vocabulary(self, stream):
+        code = code_point(stream[0])
+        for uni_range, wv in self._ranged_vocabulary_map.items():
+            if uni_range[0] <= code and code <= uni_range[1]:
+                return wv
+        return None
