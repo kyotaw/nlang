@@ -49,7 +49,7 @@ class ClauseVocabulary(object):
                 line = f.readline()
 
     def extract_vocabulary(self, tag):
-        ret = [Clause(raw_clause) for raw_clause in self._clauses.get(tag)]
+        ret = [Clause(raw_clause) for raw_clause in self._clauses.common_prefix_search(tag)]
         if len(ret) == 0:
             ret = [Clause([tag, 'O', 10])]
         return ret

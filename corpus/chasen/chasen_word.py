@@ -62,3 +62,11 @@ class ChasenWord(object):
 
     def __ge__(self, other):
         return self.lemma >= other.lemma
+
+    def __str__(self):
+        _str = '\t'.join([self.lemma, self.pron, self.base, '-'.join(self.pos)])
+        if self.conj_type:
+            _str = '\t'.join([_str, self.conj_type])
+        if self.conj_form:
+            _str = '\t'.join([_str, self.conj_form])
+        return _str

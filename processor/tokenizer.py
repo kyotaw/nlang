@@ -15,7 +15,7 @@ from nlang.base.system import env
 from nlang.base.util.singleton import Singleton
 
 
-def Tokenizer(plain=False):
+def Tokenizer(plain=True):
     def create_new_instance(cls):
         pickls = env.ready_made_tokenizer()
         if os.path.exists(pickls):

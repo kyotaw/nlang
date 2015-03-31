@@ -8,6 +8,7 @@ out/
 in/
 dev/
 corpus/
+blog/
 .python-version
 tokenizer.pickle
 __pycache__

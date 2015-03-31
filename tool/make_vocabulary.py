@@ -22,6 +22,7 @@ def get_range(c):
     raise Exception(c + 'is unicode out of range')
 
 if __name__ == '__main__':
+    # 起動パラメータ取得
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src_root_path', nargs=None, type=str, action='store')
     parser.add_argument('-f', '--file_pattern', nargs=None, type=str, action='store')
@@ -30,24 +31,34 @@ if __name__ == '__main__':
 
     start = datetime.datetime.now()
 
-    vocab = Trie()
-    analyzer = VocabularyAnalyzer()
+    # コーパスファイルのパスを集める
+    chasen_file_paths = []
+    jugo_file_paths = []
     for dir_path, sub_dirs, file_names in os.walk(args.src_root_path):
         file_list = glob.glob(os.path.expanduser(dir_path) + '/' + args.file_pattern)
         for file in file_list:
             root, ext = os.path.splitext(file)
-            r = None
             if ext == ".chasen":
-                r = ChasenCorpusReader(file)
+                chasen_file_paths.append(file)
             elif ext == ".jugo":
-                r = JugoCorpusReader(file)
-            if r:
-                print('analyzing ' + file)
-                words = r.tagged_words()
-                for word in words:
-                    if word.pron:
-                        vocab.insert(word.lemma, word)
-                analyzer.analyze(words)
+                jugo_file_paths.append(file)
+
+    # コーパスから語彙を集めてTrieで保持
+    vocabulary = Trie()
+    analyzer = VocabularyAnalyzer()
+    for corpus_file in chasen_file_paths:
+        print('extracting words form ' + corpus_file)
+        r = ChasenCorpusReader(corpus_file)
+        for word in r.words:
+            vocabulary.insert(word.lemma, word)
+        analyzer.analyze(words)
+
+    for corpus_file in jugo_file_paths:
+        print('extracting words form ' + corpus_file)
+        r = JugoCorpusReader(corpus_file)
+        for word in r.words:
+            vocabulary.insert(word.lemma, word)
+        analyzer.analyze(words)
 
     if not os.path.exists(args.out_foldername):
         os.mkdir(args.out_foldername)

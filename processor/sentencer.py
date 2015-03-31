@@ -10,7 +10,7 @@ from nlang.classifier.naive_bayes_classifier import NaiveBayesClassifier
 from nlang.base.util.singleton import Singleton
 
 
-def Sentencer(plain=False):
+def Sentencer(plain=True):
     def create_new_instance(cls):
         pickls = env.ready_made_sentencer()
         if os.path.exists(pickls):

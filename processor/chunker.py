@@ -13,7 +13,7 @@ from nlang.base.system import env
 from nlang.base.util.singleton import Singleton
 
 
-def Chunker(plain=False):
+def Chunker(plain=True):
     def create_new_instance(cls):
         pickls = env.ready_made_chunker()
         if os.path.exists(pickls):
