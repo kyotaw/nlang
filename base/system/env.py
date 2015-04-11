@@ -21,6 +21,9 @@ def vocabfile_path():
     option = __get_option('VOCABFILE_PATH')
     return option if option != '' else NLANG_ROOT + 'data/vocab/master/master.vocab'
 
+def additional_vocabfolder_path():
+    option = __get_option('ADDITIONAL_VOCABFOLDER_PATH')
+    return option if option != '' else NLANG_ROOT + 'data/vocab/additional/'
 
 def clause_iob_connfile_path():
     option = __get_option('CLAUSE_IOB_CONNFILE_PATH')

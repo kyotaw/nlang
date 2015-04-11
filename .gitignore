@@ -9,6 +9,7 @@ in/
 dev/
 corpus/
 blog/
+test_data/
 .python-version
 tokenizer.pickle
 __pycache__
