@@ -54,6 +54,38 @@ class NaiveBayesClassifier(object):
                 informatives_list[label][feature_name] = informatives_list[label][feature_name][:best_n]
         return informatives_list
 
+    def evaluate(self, test_data_list):
+        unique_label_list = set()
+        answer_label_list = []
+        test_label_list = []
+        for test_data in test_data_list:
+            label = test_data[0]
+            feature = test_data[1]
+            unique_label_list.add(label)
+            answer_label_list.append(label)
+            test_label_list.append(self.classify(feature))
+
+        precision_list = []
+        recall_list = []
+        f_list = []
+        for label in unique_label_list:
+            true_positive = 0
+            for i in range(len(answer_label_list)):
+                if label == answer_label_list[i] and answer_label_list[i] == test_label_list[i]:
+                    true_positive += 1
+
+            precision = true_positive / test_label_list.count(label)
+            recall = true_positive / answer_label_list.count(label)
+            precision_list.append(precision)
+            recall_list.append(recall)
+            f_list.append(2 * precision * recall / (precision + recall))
+        
+        return {
+            'precision': sum(precision_list) / len(precision_list),
+            'recall': sum(recall_list) / len(recall_list),
+            'f': sum(f_list) / len(f_list)
+        }
+
     def _probability_label(self, label):
         return self._label_count[label] * 1.0 / sum(self._label_count.values())
 

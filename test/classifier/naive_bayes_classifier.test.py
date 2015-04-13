@@ -26,21 +26,24 @@ allpass = True
 
 ans = 'Python'
 text = u'グイド	・	ヴァンロッサム	が	作っ	た	オープンソース'
-words = text.split('\t')
-guess = c.classify({'word':words})
+python_words = text.split('\t')
+guess = c.classify({'word':python_words})
 if ans != guess:
 	print('Failed to guess label: ' + guess + ' answer: ' + ans)
 	allpass = False
 
 ans = 'Ruby'
 text = u'Ruby	プログラミング	言語	の	Ruby	は	純粋な	オブジェクト指向	言語	です	.'
-words = text.split('\t')
-guess = c.classify({'word':words})
+ruby_words = text.split('\t')
+guess = c.classify({'word':ruby_words})
 if ans != guess:
 	print('Failed to guess label: ' + guess + ' answer: ' + ans)
 	allpass = False
 
 print(pp(c.informative_features(5)))
+
+perfomance = c.evaluate([('Ruby', {'word': ruby_words}), ('Python', {'word': python_words})])
+print(perfomance)
 
 if allpass:
 	print('all passed !')
