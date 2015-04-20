@@ -88,3 +88,7 @@ class TaggedWord(object):
 
     def __ge__(self, other):
         return self.lemma >= other.lemma
+    
+    def __str__(self):
+        _str = ','.join([self.lemma, self.pron, self.base] + self.pos + [self.conj_type, self.conj_form])
+        return _str

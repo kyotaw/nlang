@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import math
+
 from nlang.base.data.trie import Trie
 from nlang.base.data.cost_calculator import calculate_cost
 
@@ -30,7 +32,7 @@ class NaiveBayesClassifier(object):
         min_cost = sys.maxsize
         better_label = ''
         for label in self._label_count.keys():
-            cost = calculate_cost(self._probability_label(label) + self._probability_feature(feature, label))
+            cost = self._probability_label(label) + self._probability_feature(feature, label)
             if cost < min_cost:
                 min_cost = cost
                 better_label = label
@@ -87,20 +89,24 @@ class NaiveBayesClassifier(object):
         }
 
     def _probability_label(self, label):
-        return self._label_count[label] * 1.0 / sum(self._label_count.values())
+        return math.log10(self._label_count[label] * 1.0 / sum(self._label_count.values()))
 
     def _probability_feature(self, feature, label):
-        prob = 0.0
+        log_prob = 0.0
         for name, value in feature.items():
             feature_name = name
             if isinstance(value, list):
                 for v in value:
                     feature_value = v
-                    prob += self._feature_freq[name].count(feature_value, label) * 1.0 / (self._feature_count[label][feature_name] + len(self._feature_vocabulary[feature_name]))
+                    prob = self._feature_freq[name].count(feature_value, label) * 1.0 / self._feature_count[label][feature_name]
+                    if prob > 0.0:
+                        log_prob += math.log10(prob)
             else:
                 feature_value = value
-                prob += self._feature_freq[feature_name].count(feature_value, label) * 1.0 / (self._feature_count[label][feature_name] + len(self._feature_vocabulary[feature_name]))
-        return prob
+                prob = self._feature_freq[feature_name].count(feature_value, label) * 1.0 / self._feature_count[label][feature_name]
+                if prob > 0.0:
+                    log_prob += math.log10(prob)
+        return log_prob
 
     def _add_feature(self, feature, label):
         for name, value in feature.items():
