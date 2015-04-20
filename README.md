@@ -9,7 +9,8 @@ This includes the following processors:
 * Clusterizer - Clusterizer generates some groups of documents which are similar to each oher.
 
 ## Requirement
-Python 3.4.2 or later
+* Python 3.4.2 or later  
+* NumPy 1.9.2
 
 ## Usage
 * Tokenizer  
