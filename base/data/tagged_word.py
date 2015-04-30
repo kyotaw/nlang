@@ -35,9 +35,9 @@ def unpack_chasen(data, self):
     self.lemma = data.lemma
     self.pron = data.pron
     self.base = data.base
-    self.pos = list(data.pos)
-    self.conj_type = data.conj_type
-    self.conj_form = data.conj_form
+    self.pos = list(map(lambda p: ChasenTagTable[p], data.pos))
+    self.conj_type = ChasenTagTable[data.conj_type] if data.conj_type else data.conj_type
+    self.conj_form = ChasenTagTable[data.conj_form] if data.conj_form else data.conj_form
     self.length = len(data.lemma)
     self.tag = TaggedWord.tag(self.pos, self.conj_type, self.conj_form)
 
@@ -60,11 +60,11 @@ class TaggedWord(object):
             return ''
         if pos[0] in ['BOS', 'EOS', 'UNK']:
             return pos[0]
-        tag = '-'.join(map(lambda p: ChasenTagTable[p], pos))
+        tag = '-'.join(pos)
         if conj_type:
-            tag += '-' + ChasenTagTable[conj_type]
+            tag += '-' + conj_type
         if conj_form:
-            tag += '-' + ChasenTagTable[conj_form]
+            tag += '-' + conj_form
         return tag
 
     def __init__(self, data=None):

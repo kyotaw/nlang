@@ -65,6 +65,9 @@ class WordVocabulary(object):
     def get_eos(self):
         return self._get_word('EOS', 'EOS')
 
+    def get_all_words(self):
+        return [key_val[1] for key_val in self._words.dump()]
+
     def _get_word(self, lemma, pos):
         not_found = Word(TaggedWord())
         cands = self._words.get(lemma)

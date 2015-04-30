@@ -2,5 +2,5 @@
 
 options = {
     'CONNFILE_PATH': '',
-    'VOCABFILE_PATH': ''
+    # 'VOCABFILE_PATH': '/Users/kyota/work/nlang/data/test/vocab'
 }

@@ -10,6 +10,7 @@ dev/
 corpus/
 blog/
 test_data/
+data/test/
 .python-version
 tokenizer.pickle
 __pycache__
