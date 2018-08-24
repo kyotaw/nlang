@@ -18,19 +18,24 @@ This includes the following processors:
 from nlang.processor.tokenizer import Tokenizer
 
 tokenizer = Tokenizer()
-words = tokenizer.tag('世界の半分をお前にあげる')
+words = tokenizer.tag('田中さんは日曜日に王さんとコーヒーを飲みました')
 
 for word in words:
     print(word)
 
-==> 世界,セカイ,世界,名詞,一般,,
-==> の,ノ,の,助詞,連体化,,
-==> 半分,ハンブン,半分,名詞,副詞可能,,
-==> を,ヲ,を,助詞,格助詞,一般,,
-==> お前,オマエ,お前,名詞,代名詞,一般,,
+==> 田中,タナカ,田中,名詞,固有名詞,人名,姓,,
+==> さん,サン,さん,名詞,接尾,人名,,
+==> は,ハ,は,助詞,係助詞,,
+==> 日曜日,ニチヨウビ,日曜日,名詞,副詞可能,,
 ==> に,ニ,に,助詞,格助詞,一般,,
-==> あげる,アゲル,あげる,動詞,自立,一段,基本形
-```
+==> 王,オウ,王,名詞,固有名詞,人名,姓,,
+==> さん,サン,さん,名詞,接尾,人名,,
+==> と,ト,と,助詞,並立助詞,,
+==> コーヒー,コーヒー,コーヒー,名詞,一般,,
+==> を,ヲ,を,助詞,格助詞,一般,,
+==> 飲み,ノミ,飲む,動詞,自立,五段・マ行,連用形
+==> まし,マシ,ます,助動詞,特殊・マス,連用形
+==> た,タ,た,助動詞,特殊・タ,基本形
 
 * Chunker  
 ```python
@@ -38,7 +43,7 @@ from nlang.processor.tokenizer import Tokenizer
 from nlang.processor.chunker import Chunker
 
 tokenizer = Tokenizer()
-words = tokenizer.tag('世界の半分をお前にあげる')
+words = tokenizer.tag('毎日うちへ帰ってから宿題をします。')
 
 chunker = Chunker()
 chunks = chunker.clause(words)
@@ -47,10 +52,11 @@ for chunk in chunks:
     lemmas = [w.lemma for w in chunk]
     print(lemmas)
 
-==> ['世界', 'の']
-==> ['半分', 'を']
-==> ['お前', 'に']
-==> ['あげる']
+==> ['毎日', 'うち', 'へ']
+==> ['帰っ', 'て', 'から']
+==> ['宿題', 'を', 'し']
+==> ['ます']
+==> ['。']
 ```
 
 * Sentencer  
